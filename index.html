@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>USTULIMP · Seja o fornecedor de limpeza da sua região</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#004F84;--navy-deep:#013A63;--cyan:#1DBFD7;--cyan-soft:#7FD9E8;
+    --green:#6AC07A;--green-deep:#4EA862;--ink:#0A2540;--ink-soft:#3E5A72;
+    --paper:#FFFFFF;--mist:#EFF7FB;--mist-deep:#DCEDF5;--line:#D2E3ED;--amber:#E8A44B;
+    --shadow:0 18px 44px -20px rgba(1,58,99,.35);--shadow-sm:0 8px 24px -14px rgba(1,58,99,.3);
+    --shadow-lg:0 40px 80px -30px rgba(0,20,40,.5);--r:20px;--maxw:1140px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{font-family:'Inter',sans-serif;color:var(--ink);background:var(--paper);line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  h1,h2,h3,h4{font-family:'Outfit',sans-serif;line-height:1.09;letter-spacing:-.02em}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
+  a{color:inherit;text-decoration:none}
+  ::selection{background:var(--cyan);color:#fff}
+  :focus-visible{outline:3px solid var(--cyan);outline-offset:2px}
+
+  /* NAV */
+  .nav{position:sticky;top:0;z-index:60;background:rgba(255,255,255,.86);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+  .nav-in{max-width:var(--maxw);margin:0 auto;padding:13px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+  .brand{display:flex;align-items:center;gap:16px;text-decoration:none;color:inherit}
+  .brand-logo{height:100px;width:auto;display:block;flex:none}
+  .brand-sub{font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);font-weight:600;line-height:1.2;max-width:130px}
+  @media(max-width:640px){.brand-logo{height:72px}.brand-sub{display:none}}
+  .nav-links{display:flex;gap:26px;align-items:center}
+  .nav-links a{font-family:'Outfit';font-weight:500;font-size:.92rem;color:var(--ink-soft);transition:.2s}
+  .nav-links a:hover{color:var(--navy)}
+  .nav-cta{font-family:'Outfit';font-weight:600;font-size:.9rem;background:var(--navy);color:#fff;padding:10px 20px;border-radius:100px;transition:.2s;white-space:nowrap;border:none;cursor:pointer}
+  .nav-cta:hover{background:var(--navy-deep);transform:translateY(-1px)}
+  @media(max-width:860px){.nav-links a{display:none}}
+
+  /* buttons */
+  .btn{font-family:'Outfit';font-weight:700;font-size:1.02rem;padding:16px 28px;border-radius:100px;border:none;cursor:pointer;transition:.22s;display:inline-flex;align-items:center;gap:10px;line-height:1}
+  .btn svg{width:19px;height:19px}
+  .btn-cyan{position:relative;overflow:hidden;background:var(--cyan);color:#053246;box-shadow:0 14px 30px -12px rgba(29,191,215,.65)}
+  .btn-cyan:hover{transform:translateY(-2px)}
+  .btn-cyan::after{content:"";position:absolute;top:0;left:0;width:40%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.7),transparent);animation:shimmer 3.6s ease-in-out infinite}
+  .btn-navy{background:var(--navy);color:#fff;box-shadow:0 14px 30px -12px rgba(0,79,132,.6)}
+  .btn-navy:hover{background:var(--navy-deep);transform:translateY(-2px)}
+  .btn-white{background:#fff;color:var(--navy)}
+  .btn-white:hover{transform:translateY(-2px);background:#F0FAFD}
+  @keyframes shimmer{0%{transform:translateX(-120%)}100%{transform:translateX(240%)}}
+
+  /* HERO */
+  .hero{position:relative;overflow:hidden;background:linear-gradient(165deg,#E9F5FB 0%,#fff 58%);padding:70px 0 84px}
+  .blob{position:absolute;border-radius:50%;filter:blur(60px);opacity:.5;z-index:0}
+  .blob.b-cy{width:460px;height:460px;background:var(--cyan);top:-140px;right:-80px;opacity:.28}
+  .blob.b-gr{width:360px;height:360px;background:var(--green);bottom:-160px;left:-120px;opacity:.22}
+  .dots{position:absolute;inset:0;z-index:0;color:var(--cyan);opacity:.4;
+    -webkit-mask-image:radial-gradient(460px circle at 74% 40%,#000,transparent 75%);mask-image:radial-gradient(460px circle at 74% 40%,#000,transparent 75%)}
+  .hero-grid{position:relative;z-index:2;display:grid;grid-template-columns:1.1fr .9fr;gap:48px;align-items:center}
+  .tarja{display:inline-flex;align-items:center;gap:9px;font-family:'Outfit';font-weight:600;font-size:.8rem;color:#fff;background:linear-gradient(100deg,var(--green),var(--green-deep));padding:8px 16px;border-radius:100px;box-shadow:0 10px 24px -12px rgba(78,168,98,.7)}
+  .tarja .pulse{width:8px;height:8px;border-radius:50%;background:#fff;box-shadow:0 0 0 0 rgba(255,255,255,.7);animation:pulse 2s infinite}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(255,255,255,.6)}70%{box-shadow:0 0 0 8px rgba(255,255,255,0)}100%{box-shadow:0 0 0 0 rgba(255,255,255,0)}}
+  .hero h1{font-size:clamp(2.1rem,4.4vw,3.4rem);font-weight:800;color:var(--navy);margin:22px 0 18px}
+  .hero h1 .hl{color:var(--cyan)}
+  .lede{font-size:clamp(1.06rem,1.7vw,1.28rem);color:var(--ink-soft);max-width:40ch;margin-bottom:30px}
+  .lede b{color:var(--ink);font-weight:600}
+  .hero-ctas{display:flex;gap:14px;flex-wrap:wrap}
+  .hstats{display:flex;gap:26px;margin-top:30px;flex-wrap:wrap}
+  .hstats .n{font-family:'Outfit';font-weight:800;font-size:1.65rem;color:var(--navy);line-height:1}
+  .hstats .l{font-size:.8rem;color:var(--ink-soft);margin-top:4px;display:block;max-width:15ch}
+
+  /* hero stage - produto herói fictício */
+  .hero-stage{position:relative;height:440px;display:flex;align-items:center;justify-content:center}
+  .halo{position:absolute;width:340px;height:340px;border-radius:50%;background:radial-gradient(circle,rgba(29,191,215,.35),transparent 68%)}
+  .bubble{position:absolute;border-radius:50%;background:radial-gradient(circle at 32% 28%,rgba(255,255,255,.95),var(--cyan-soft) 42%,var(--cyan));box-shadow:inset 0 -6px 14px rgba(0,79,132,.18);z-index:3}
+  .hero-badge{position:absolute;z-index:4;background:#fff;border-radius:16px;padding:14px 16px;box-shadow:var(--shadow);display:flex;align-items:center;gap:11px;font-family:'Outfit'}
+  .hero-badge .hb-ic{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex:none}
+  .hero-badge .hb-ic svg{width:20px;height:20px;color:#fff}
+  .hero-badge .hb-t{font-weight:800;font-size:1.05rem;color:var(--navy);line-height:1}
+  .hero-badge .hb-s{font-size:.72rem;color:var(--ink-soft)}
+  .hb-1{top:8%;left:-4%;animation:float 6s ease-in-out infinite}
+  .hb-2{bottom:10%;right:-6%;animation:float 7s ease-in-out infinite 1s}
+  @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
+
+  /* TRUST STRIP */
+  .trust{background:var(--navy);position:relative;z-index:5}
+  .trust-in{max-width:var(--maxw);margin:0 auto;padding:22px 24px;display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+  .tb{display:flex;align-items:center;gap:11px;color:#fff;font-family:'Outfit';font-weight:600;font-size:.93rem}
+  .tb svg{width:23px;height:23px;color:var(--cyan-soft);flex:none}
+  @media(max-width:760px){.trust-in{grid-template-columns:1fr 1fr;gap:14px}.tb{font-size:.85rem}}
+
+  /* SECTION SHELL */
+  .sec{padding:80px 0;position:relative}
+  .sec.mist{background:var(--mist)}
+  .shead{max-width:680px;margin:0 auto 48px;text-align:center}
+  .kick{font-family:'Outfit';font-weight:700;font-size:.78rem;letter-spacing:.16em;text-transform:uppercase;color:var(--cyan)}
+  .shead h2{font-size:clamp(1.95rem,3.7vw,2.8rem);font-weight:800;color:var(--navy);margin:12px 0 14px}
+  .shead p{color:var(--ink-soft);font-size:1.08rem}
+
+  /* PRA QUEM É - 2 públicos */
+  .who-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+  .who{position:relative;overflow:hidden;border-radius:24px;padding:38px 34px;border:1px solid var(--line);background:#fff;transition:.25s}
+  .who:hover{transform:translateY(-4px);box-shadow:var(--shadow)}
+  .who.cpf{border-top:5px solid var(--green)}
+  .who.cnpj{border-top:5px solid var(--navy)}
+  .who .wemoji{width:56px;height:56px;border-radius:16px;display:flex;align-items:center;justify-content:center;margin-bottom:20px}
+  .who.cpf .wemoji{background:linear-gradient(140deg,var(--green),var(--green-deep))}
+  .who.cnpj .wemoji{background:linear-gradient(140deg,var(--cyan),var(--navy))}
+  .who .wemoji svg{width:28px;height:28px;color:#fff}
+  .who h3{font-size:1.4rem;font-weight:700;color:var(--navy);margin-bottom:10px}
+  .who p{color:var(--ink-soft);font-size:1rem;margin-bottom:22px}
+  .who .wlink{font-family:'Outfit';font-weight:700;font-size:.98rem;display:inline-flex;align-items:center;gap:8px;cursor:pointer;border:none;background:none;padding:0}
+  .who.cpf .wlink{color:var(--green-deep)}
+  .who.cnpj .wlink{color:var(--navy)}
+  .who .wlink svg{width:18px;height:18px;transition:.2s}
+  .who .wlink:hover svg{transform:translateX(4px)}
+
+  /* POR QUE AGORA - navy destaque */
+  .why{background:linear-gradient(155deg,var(--navy) 0%,var(--navy-deep) 100%);color:#fff;position:relative;overflow:hidden}
+  .why .blob{opacity:.25}
+  .why .b-cy{background:var(--cyan);top:-120px;right:-60px;width:380px;height:380px}
+  .why-grid{position:relative;z-index:2;display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center}
+  .why h2{font-size:clamp(1.9rem,3.4vw,2.6rem);font-weight:800;color:#fff;margin-bottom:18px}
+  .why .lead{color:#BFDCEC;font-size:1.1rem;line-height:1.7}
+  .why-cards{display:flex;flex-direction:column;gap:14px}
+  .whyc{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:16px;padding:22px 24px;display:flex;gap:16px;align-items:flex-start}
+  .whyc .wc-ic{width:44px;height:44px;border-radius:11px;background:rgba(29,191,215,.2);display:flex;align-items:center;justify-content:center;flex:none}
+  .whyc .wc-ic svg{width:23px;height:23px;color:var(--cyan-soft)}
+  .whyc h4{font-size:1.1rem;font-weight:700;color:#fff;margin-bottom:4px}
+  .whyc p{color:#A9C4D6;font-size:.92rem}
+
+  /* BENTO benefícios */
+  .bento{display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:158px;gap:16px}
+  .bcard{position:relative;overflow:hidden;background:#fff;border:1px solid var(--line);border-radius:20px;padding:26px;transition:.25s;display:flex;flex-direction:column;justify-content:flex-end}
+  .bcard:hover{transform:translateY(-3px);box-shadow:var(--shadow);border-color:var(--cyan-soft)}
+  .bcard .bico{width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:linear-gradient(140deg,var(--cyan),var(--navy));margin-bottom:auto}
+  .bcard .bico svg{width:24px;height:24px;color:#fff}
+  .bcard h4{font-size:1.16rem;font-weight:700;color:var(--navy);margin:14px 0 6px}
+  .bcard p{color:var(--ink-soft);font-size:.93rem}
+  .bcard.big{grid-column:span 2;grid-row:span 2}
+  .bcard.wide{grid-column:span 2}
+  .bcard.feat{background:linear-gradient(150deg,var(--navy),var(--navy-deep));border:none}
+  .bcard.feat h4,.bcard.feat .big-n{color:#fff}.bcard.feat p{color:#BFDCEC}.bcard.feat .bico{background:rgba(255,255,255,.16)}
+  .big-n{font-family:'Outfit';font-weight:800;font-size:3.6rem;line-height:1;color:#fff;letter-spacing:-.03em}
+  .bcard.gr .bico{background:linear-gradient(140deg,var(--green),var(--green-deep))}
+  .bwm{position:absolute;right:-14px;bottom:-20px;opacity:.1}.bwm svg{width:140px;height:140px;color:#fff}
+
+  /* RECOMPRA */
+  .recompra{background:linear-gradient(160deg,#fff,var(--mist))}
+  .rec-grid{display:grid;grid-template-columns:1fr 1fr;gap:50px;align-items:center}
+  .rec-copy h2{font-size:clamp(1.95rem,3.6vw,2.7rem);font-weight:800;color:var(--navy);margin-bottom:16px}
+  .rec-copy p{color:var(--ink-soft);font-size:1.08rem;line-height:1.7}
+  .rec-copy .big{color:var(--navy);font-weight:600}
+  .cycle{position:relative;background:#fff;border:1px solid var(--line);border-radius:24px;padding:36px;box-shadow:var(--shadow-sm)}
+  .cycle-ring{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .cstep{background:var(--mist);border-radius:16px;padding:20px;text-align:center}
+  .cstep .cn{width:40px;height:40px;border-radius:50%;background:var(--cyan);color:#fff;font-family:'Outfit';font-weight:800;display:flex;align-items:center;justify-content:center;margin:0 auto 10px}
+  .cstep:nth-child(2) .cn{background:var(--green)}
+  .cstep:nth-child(3) .cn{background:var(--amber)}
+  .cstep:nth-child(4) .cn{background:var(--navy)}
+  .cstep h5{font-family:'Outfit';font-weight:700;font-size:.98rem;color:var(--navy)}
+  .cstep p{font-size:.8rem;color:var(--ink-soft);margin-top:3px}
+  .cycle-foot{text-align:center;margin-top:22px;padding-top:20px;border-top:1px solid var(--line);font-family:'Outfit';font-weight:700;color:var(--green-deep);font-size:1.05rem}
+
+  /* SIMULADOR */
+  .sim{max-width:760px;margin:0 auto;background:#fff;border:1px solid var(--line);border-radius:24px;padding:40px;box-shadow:var(--shadow)}
+  .simrow{margin-bottom:26px}
+  .simrow label{display:flex;justify-content:space-between;align-items:baseline;font-family:'Outfit';font-weight:600;color:var(--navy);margin-bottom:12px}
+  .simrow label .v{font-size:1.4rem;font-weight:800;color:var(--cyan)}
+  input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:8px;border-radius:8px;background:var(--mist-deep);outline:none}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:26px;height:26px;border-radius:50%;background:var(--navy);cursor:pointer;border:4px solid #fff;box-shadow:0 3px 10px rgba(0,79,132,.4)}
+  input[type=range]::-moz-range-thumb{width:26px;height:26px;border-radius:50%;background:var(--navy);cursor:pointer;border:4px solid #fff;box-shadow:0 3px 10px rgba(0,79,132,.4)}
+  .simout{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:30px}
+  .simcard{border-radius:16px;padding:24px;text-align:center}
+  .simcard.sell{background:var(--mist);border:1px solid var(--line)}
+  .simcard.profit{background:linear-gradient(150deg,var(--green),var(--green-deep));color:#fff}
+  .simcard .cl{font-size:.85rem;font-weight:600;margin-bottom:6px;opacity:.92}
+  .simcard .cv{font-family:'Outfit';font-weight:800;font-size:2.1rem;line-height:1}
+  .simcard.sell .cv{color:var(--navy)}
+  .simnote{text-align:center;font-size:.82rem;color:var(--ink-soft);margin-top:20px}
+
+  /* QUALIDADE / CERTIFICAÇÕES */
+  .cert-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;max-width:980px;margin:0 auto}
+  .cert{background:#fff;border:1px solid var(--line);border-radius:16px;padding:24px 22px;display:flex;gap:15px;align-items:flex-start;transition:.25s}
+  .cert:hover{border-color:var(--green);box-shadow:var(--shadow-sm)}
+  .cert .cico{width:46px;height:46px;border-radius:12px;flex:none;background:var(--mist);display:flex;align-items:center;justify-content:center}
+  .cert .cico svg{width:24px;height:24px;color:var(--navy)}
+  .cert h4{font-family:'Outfit';font-weight:700;font-size:1.02rem;color:var(--navy);margin-bottom:4px}
+  .cert p{font-size:.86rem;color:var(--ink-soft)}
+  .cadmin{max-width:980px;margin:22px auto 0;text-align:center;font-size:.78rem;color:var(--ink-soft);background:#FFF8E9;border:1px solid #F0DCB4;border-radius:12px;padding:10px 16px}
+
+  /* PRODUTOS - mockups fictícios */
+  .pnote{max-width:var(--maxw);margin:0 auto 26px;text-align:center;font-size:.78rem;color:var(--navy);background:#fff;border:1px solid #CFE6F1;border-radius:12px;padding:10px 16px;font-family:'Outfit';font-weight:600}
+  .pgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+  .pcard{background:linear-gradient(170deg,#fff,var(--mist));border:1px solid var(--line);border-radius:18px;padding:24px 18px 20px;text-align:center;transition:.25s}
+  .pcard:hover{transform:translateY(-4px);box-shadow:var(--shadow)}
+  .pcard svg{display:block;margin:0 auto 8px}
+  .pcard h4{font-family:'Outfit';font-weight:700;font-size:1rem;color:var(--navy);margin-top:6px}
+  .pcard span{font-size:.78rem;color:var(--ink-soft)}
+
+  /* SUPORTE */
+  .sup-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+  .sup{background:#fff;border:1px solid var(--line);border-radius:20px;padding:30px 26px;transition:.25s}
+  .sup:hover{transform:translateY(-3px);box-shadow:var(--shadow-sm)}
+  .sup .sic{width:50px;height:50px;border-radius:13px;background:var(--mist);display:flex;align-items:center;justify-content:center;margin-bottom:18px}
+  .sup .sic svg{width:26px;height:26px;color:var(--navy)}
+  .sup h4{font-size:1.15rem;font-weight:700;color:var(--navy);margin-bottom:8px}
+  .sup p{color:var(--ink-soft);font-size:.94rem}
+
+  /* STEPS */
+  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+  .step{background:#fff;border:1px solid var(--line);border-radius:20px;padding:32px 28px}
+  .step .sn{width:44px;height:44px;border-radius:12px;background:var(--navy);color:#fff;font-family:'Outfit';font-weight:800;font-size:1.3rem;display:flex;align-items:center;justify-content:center;margin-bottom:18px}
+  .step:nth-child(2) .sn{background:var(--cyan);color:#053246}.step:nth-child(3) .sn{background:var(--green);color:#fff}
+  .step h4{font-size:1.16rem;font-weight:700;color:var(--navy);margin-bottom:8px}
+  .step p{color:var(--ink-soft);font-size:.95rem}
+  .step .amt{display:inline-block;margin-top:10px;font-family:'Outfit';font-weight:800;color:var(--green-deep);background:rgba(106,192,122,.14);padding:3px 12px;border-radius:8px;font-size:.9rem}
+
+  /* RISK */
+  .risk{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+  .rcard{background:#fff;border:1px solid var(--line);border-radius:16px;padding:26px 22px;text-align:center}
+  .rcard.hl{border:2px solid var(--green);background:linear-gradient(170deg,#fff,rgba(106,192,122,.06))}
+  .rcard .rico{width:52px;height:52px;border-radius:50%;background:var(--mist);display:flex;align-items:center;justify-content:center;margin:0 auto 14px}
+  .rcard.hl .rico{background:rgba(106,192,122,.16)}
+  .rcard .rico svg{width:26px;height:26px;color:var(--green-deep)}
+  .rcard h4{font-family:'Outfit';font-weight:700;font-size:1rem;color:var(--navy);margin-bottom:5px}
+  .rcard p{font-size:.84rem;color:var(--ink-soft)}
+  @media(max-width:760px){.risk{grid-template-columns:1fr 1fr}}
+
+  /* DEPOIMENTOS */
+  .tst-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+  .tst{background:#fff;border:1px solid var(--line);border-radius:20px;padding:28px 26px}
+  .tst .stars{color:var(--amber);font-size:1rem;letter-spacing:2px;margin-bottom:12px}
+  .tst p{color:var(--ink);font-size:1rem;font-style:italic;margin-bottom:18px;line-height:1.6}
+  .tst .who2{display:flex;align-items:center;gap:12px}
+  .tst .av{width:46px;height:46px;border-radius:50%;color:#fff;display:flex;align-items:center;justify-content:center;font-family:'Outfit';font-weight:700;font-size:1.05rem}
+  .tst .nm{font-family:'Outfit';font-weight:700;color:var(--navy);font-size:.96rem;line-height:1.2}
+  .tst .ct{font-size:.8rem;color:var(--ink-soft)}
+  .tst-admin{max-width:var(--maxw);margin:24px auto 0;text-align:center;font-size:.78rem;color:var(--navy);background:#fff;border:1px solid #CFE6F1;border-radius:12px;padding:10px 16px;font-family:'Outfit';font-weight:600}
+
+  /* CTA STRIP */
+  .ctastrip{position:relative;overflow:hidden;background:linear-gradient(120deg,var(--cyan),var(--navy));border-radius:24px;padding:46px 42px;display:flex;align-items:center;justify-content:space-between;gap:26px;flex-wrap:wrap;max-width:var(--maxw);margin:0 auto}
+  .ctastrip .blob{opacity:.25}.ctastrip .b-gr{background:var(--green);bottom:-100px;left:-60px;width:280px;height:280px}
+  .ctastrip h3{position:relative;z-index:2;color:#fff;font-size:clamp(1.4rem,2.6vw,2rem);font-weight:800;max-width:24ch}
+  .ctastrip p{position:relative;z-index:2;color:rgba(255,255,255,.9);margin-top:6px}
+  .ctastrip .btn{position:relative;z-index:2}
+
+  /* FAQ */
+  .faq{max-width:800px;margin:0 auto;display:flex;flex-direction:column;gap:12px}
+  .qa{background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden;transition:.2s}
+  .qa.open{border-color:var(--cyan);box-shadow:var(--shadow-sm)}
+  .q{width:100%;text-align:left;background:none;border:none;cursor:pointer;padding:21px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;font-family:'Outfit';font-weight:600;font-size:1.06rem;color:var(--navy)}
+  .q svg{width:22px;height:22px;flex:none;color:var(--cyan);transition:transform .25s}
+  .qa.open .q svg{transform:rotate(45deg)}
+  .a{max-height:0;overflow:hidden;transition:max-height .3s ease}
+  .a-in{padding:0 24px 21px;color:var(--ink-soft);font-size:.99rem}
+  .a-in b{color:var(--navy)}
+  .a-in .flag{color:var(--navy);background:var(--mist);border-radius:6px;padding:1px 7px;font-weight:600;font-family:'Outfit';font-size:.9em}
+
+  /* FORM */
+  .formsec{position:relative;padding:88px 0;background:linear-gradient(155deg,var(--navy) 0%,var(--navy-deep) 55%,#012c4d 100%);overflow:hidden}
+  .formsec .glow{position:absolute;border-radius:50%}
+  .formsec .g1{width:520px;height:520px;background:radial-gradient(circle,rgba(29,191,215,.28),transparent 70%);top:-160px;right:-120px}
+  .formsec .g2{width:440px;height:440px;background:radial-gradient(circle,rgba(106,192,122,.18),transparent 70%);bottom:-160px;left:-120px}
+  .form-head{position:relative;z-index:2;text-align:center;max-width:640px;margin:0 auto 38px;color:#fff}
+  .form-head .kick{color:var(--cyan-soft)}
+  .form-head h2{color:#fff;font-size:clamp(1.95rem,3.7vw,2.8rem);font-weight:800;margin:12px 0}
+  .form-head p{color:#BFDCEC;font-size:1.06rem}
+  .card{position:relative;z-index:2;max-width:640px;margin:0 auto;border-radius:26px;padding:2px;overflow:hidden;background:#fff;box-shadow:var(--shadow-lg)}
+  .beam{position:absolute;inset:-45%;background:conic-gradient(from 0deg,transparent 68%,var(--cyan) 84%,var(--green) 92%,transparent);animation:beam 7s linear infinite;z-index:0}
+  @keyframes beam{to{transform:rotate(360deg)}}
+  .card-in{position:relative;z-index:1;background:#fff;border-radius:24px;padding:12px}
+  .toggle{display:grid;grid-template-columns:1fr 1fr;gap:8px;background:var(--mist);border-radius:16px;padding:8px;margin-bottom:8px}
+  .tg{border:1.5px solid transparent;background:transparent;border-radius:12px;padding:16px 12px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:8px;font-family:'Outfit';transition:.2s}
+  .tg svg{width:28px;height:28px;color:var(--ink-soft);transition:.2s}
+  .tg .tt{font-weight:700;font-size:1.02rem;color:var(--ink-soft);transition:.2s}
+  .tg .ts{font-size:.75rem;color:#8CA6B8;font-weight:500}
+  .tg.active{background:#fff;box-shadow:var(--shadow-sm)}
+  .tg.active.rev{border-color:var(--green)}.tg.active.rev svg{color:var(--green-deep)}.tg.active.rev .tt{color:var(--green-deep)}
+  .tg.active.loj{border-color:var(--navy)}.tg.active.loj svg{color:var(--navy)}.tg.active.loj .tt{color:var(--navy)}
+  .fbody{padding:22px 24px 26px}
+  .intro{text-align:center;color:var(--ink-soft);font-size:.9rem;margin-bottom:22px;padding:12px;background:var(--mist);border-radius:12px}
+  .intro b{color:var(--navy)}
+  .field{margin-bottom:16px}
+  .field label{display:block;font-family:'Outfit';font-weight:600;font-size:.86rem;color:var(--navy);margin-bottom:7px}
+  .field input,.field select{width:100%;font-family:'Inter';font-size:1rem;color:var(--ink);padding:13px 15px;border:1.5px solid var(--line);border-radius:11px;background:#fff;outline:none;transition:.18s}
+  .field input:focus,.field select:focus{border-color:var(--cyan);box-shadow:0 0 0 4px rgba(29,191,215,.15)}
+  .field input.err{border-color:#E0525B;box-shadow:0 0 0 4px rgba(224,82,91,.12)}
+  .field .msg{font-size:.77rem;color:#E0525B;margin-top:6px;display:none;font-weight:500}
+  .field .msg.show{display:block}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .branch{display:none}.branch.show{display:block;animation:slideIn .3s ease}
+  @keyframes slideIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  .submit{width:100%;position:relative;overflow:hidden;font-family:'Outfit';font-weight:700;font-size:1.12rem;color:#fff;background:var(--green);border:none;border-radius:13px;padding:18px;cursor:pointer;transition:.22s;display:flex;align-items:center;justify-content:center;gap:10px;margin-top:6px}
+  .submit:hover{background:var(--green-deep);transform:translateY(-2px)}
+  .submit::after{content:"";position:absolute;top:0;left:0;width:40%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.5),transparent);animation:shimmer 3.6s ease-in-out infinite}
+  .submit svg{width:22px;height:22px}
+  .fine{text-align:center;font-size:.8rem;color:var(--ink-soft);margin-top:14px}
+  .fine svg{width:14px;height:14px;vertical-align:-2px;color:var(--green-deep)}
+
+  /* FOOTER */
+  footer{background:var(--ink);color:#A9C4D6;padding:44px 0 34px}
+  .foot-in{display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap}
+  .foot-brand{display:flex;align-items:center;gap:12px}
+  .foot-brand .brand-logo{height:100px;background:#fff;padding:10px 14px;border-radius:14px}
+  .foot-brand .brand-sub{color:#7FA0B5;font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;font-weight:600;line-height:1.2;max-width:150px}
+  .foot-links{display:flex;align-items:center;gap:18px;font-size:.92rem}
+  .foot-links a{display:inline-flex;align-items:center;gap:7px;transition:.2s}
+  .foot-links a:hover{color:var(--cyan-soft)}
+  .foot-links svg{width:18px;height:18px}
+  .foot-copy{width:100%;border-top:1px solid rgba(255,255,255,.1);margin-top:28px;padding-top:20px;font-size:.82rem;color:#6E8CA0}
+
+  /* PLACEHOLDERS DE FOTO (trocar por foto real) */
+  .ph{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px;text-align:center;background:linear-gradient(150deg,#E6F1F8,#F6FBFD);border:1px solid #CFE6F1;border-radius:20px;overflow:hidden;padding:20px}
+  .ph::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 28% 24%,rgba(29,191,215,.14),transparent 58%),radial-gradient(circle at 78% 82%,rgba(106,192,122,.14),transparent 58%)}
+  .ph-ic{position:relative;width:54px;height:54px;border-radius:15px;background:#fff;box-shadow:var(--shadow-sm);display:flex;align-items:center;justify-content:center}
+  .ph-ic svg{width:27px;height:27px;color:var(--cyan)}
+  .ph-t{position:relative;font-family:'Outfit';font-weight:700;font-size:.92rem;color:var(--navy);max-width:24ch;line-height:1.3}
+  .ph-s{position:relative;font-size:.72rem;color:var(--ink-soft);font-family:'Outfit';font-weight:600;background:#fff;padding:3px 11px;border-radius:100px}
+  .hero-ph{width:min(360px,100%);height:400px;z-index:2}
+  .fab-grid{display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:172px;gap:16px}
+  .fab-grid .ph{border-radius:18px}
+  .fab-a{grid-column:span 2;grid-row:span 2}
+  .fab-d{grid-column:span 2}
+  .ph-av{background:linear-gradient(150deg,#E6F1F8,#F6FBFD)!important;border:1px solid #CFE6F1;display:flex!important;align-items:center;justify-content:center}
+  .ph-av svg{width:20px;height:20px;color:var(--cyan)}
+  .tst-vid{position:absolute;top:16px;right:16px;display:inline-flex;align-items:center;gap:5px;font-family:'Outfit';font-weight:700;font-size:.7rem;color:var(--navy);background:#fff;border:1px solid var(--line);padding:4px 9px;border-radius:100px}
+  .tst-vid svg{width:12px;height:12px;color:var(--cyan)}
+  @media(max-width:900px){.fab-grid{grid-template-columns:1fr 1fr;grid-auto-rows:150px}.fab-a{grid-column:span 2;grid-row:span 1}.fab-d{grid-column:span 2}}
+  @media(max-width:560px){.fab-grid{grid-template-columns:1fr}.fab-a,.fab-d{grid-column:span 1}.hero-ph{height:300px}}
+
+  /* RESPONSIVE */
+  @media(max-width:900px){
+    .hero-grid,.why-grid,.rec-grid{grid-template-columns:1fr;gap:26px}
+    .hero-stage{height:320px;order:-1}
+    .who-grid{grid-template-columns:1fr}
+    .bento{grid-template-columns:1fr 1fr;grid-auto-rows:148px}.bcard.big{grid-column:span 2;grid-row:span 2}.bcard.wide{grid-column:span 2}
+    .steps,.sup-grid,.cert-grid,.tst-grid{grid-template-columns:1fr}.pgrid{grid-template-columns:1fr 1fr}
+  }
+  @media(max-width:560px){
+    .two,.simout,.cycle-ring{grid-template-columns:1fr}.pgrid{grid-template-columns:1fr 1fr}.risk{grid-template-columns:1fr 1fr}
+    .bento{grid-template-columns:1fr}.bcard.big,.bcard.wide{grid-column:span 1}.bcard{grid-row:span 1!important;min-height:150px}
+    .hero{padding:52px 0 60px}.sec{padding:58px 0}.btn{width:100%;justify-content:center}.hero-ctas{flex-direction:column}
+    .sim,.fbody{padding:20px 18px}.ctastrip{padding:34px 24px;justify-content:center;text-align:center}
+    .who{padding:30px 26px}
+  }
+  @media(prefers-reduced-motion:reduce){*{animation:none!important;scroll-behavior:auto!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-in">
+    <a href="#" class="brand" aria-label="Ustulimp">
+      <img class="brand-logo" src="assets/logo-ustulimp.png" alt="Ustulimp" width="180" height="128">
+      <span class="brand-sub">Produtos de limpeza</span>
+    </a>
+    <div class="nav-links">
+      <a href="#negocio">Vantagens</a>
+      <a href="#lucro">Quanto lucra</a>
+      <a href="#produtos">Produtos</a>
+      <a href="#faq">Dúvidas</a>
+    </div>
+    <button class="nav-cta" data-cta>Quero revender</button>
+  </div>
+</nav>
+
+<!-- 1 · HERO -->
+<header class="hero">
+  <div class="blob b-cy"></div><div class="blob b-gr"></div>
+  <svg class="dots" width="100%" height="100%"><defs><pattern id="hd" width="22" height="22" patternUnits="userSpaceOnUse"><circle cx="1.6" cy="1.6" r="1.6" fill="currentColor"/></pattern></defs><rect width="100%" height="100%" fill="url(#hd)"/></svg>
+  <div class="wrap hero-grid">
+    <div>
+      <span class="tarja"><span class="pulse"></span>Fábrica própria de produtos de limpeza · revenda autorizada</span>
+      <h1>Seja um revendedor autorizado Ustulimp e revenda produtos de limpeza na <span class="hl">sua região</span></h1>
+      <p class="lede">Aqui é a fábrica falando direto com você. Compre da gente e revenda com <b>60% a 100% de margem</b>. É produto que o cliente usa, acaba e compra de novo todo mês. Com ou sem loja, dá pra começar com <b>R$ 1.500</b>.</p>
+      <div class="hero-ctas">
+        <button class="btn btn-cyan" data-cta><svg viewBox="0 0 24 24" fill="none" stroke="#053246" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M21 7v6h-6"/></svg>Quero revender</button>
+        <button class="btn btn-navy" data-scroll="#lucro"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/></svg>Ver quanto lucro</button>
+      </div>
+      <div class="hstats">
+        <div><span class="n">60–100%</span><span class="l">de margem na revenda</span></div>
+        <div><span class="n">Todo mês</span><span class="l">seu cliente recompra</span></div>
+        <div><span class="n">R$ 1.500</span><span class="l">pra começar a girar</span></div>
+      </div>
+    </div>
+    <div class="hero-stage" aria-hidden="true">
+      <div class="halo"></div>
+      <!-- placeholder foto de pessoa (humanização) -->
+      <div class="ph hero-ph">
+        <div class="ph-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3Z"/><circle cx="12" cy="13" r="3"/></svg></div>
+        <div class="ph-t">Foto: revendedor(a) ou a Marcela segurando o produto, sorrindo</div>
+        <div class="ph-s">vertical · 4:5</div>
+      </div>
+      <div class="bubble" style="width:52px;height:52px;top:12%;right:8%;animation:float 6s ease-in-out infinite"></div>
+      <div class="bubble" style="width:30px;height:30px;top:52%;left:4%;animation:float 5.5s ease-in-out infinite .6s"></div>
+      <div class="bubble" style="width:22px;height:22px;bottom:20%;right:2%;animation:float 6.4s ease-in-out infinite .3s"></div>
+      <div class="hero-badge hb-1"><div class="hb-ic" style="background:linear-gradient(140deg,var(--green),var(--green-deep))"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div><div><div class="hb-t">Até 100%</div><div class="hb-s">de margem</div></div></div>
+      <div class="hero-badge hb-2"><div class="hb-ic" style="background:linear-gradient(140deg,var(--cyan),var(--navy))"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 4v5h-5"/></svg></div><div><div class="hb-t">Recompra</div><div class="hb-s">todo mês</div></div></div>
+    </div>
+  </div>
+</header>
+
+<!-- 2 · TRUST STRIP -->
+<div class="trust">
+  <div class="trust-in">
+    <div class="tb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21V9l6-3v3l6-3v3l6-3v15z"/></svg>Fábrica própria</div>
+    <div class="tb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 4v6c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6z"/><path d="M9 12l2 2 4-4"/></svg>Regularizado na ANVISA</div>
+    <div class="tb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M8 4v5M16 4v5"/></svg>Linha completa</div>
+    <div class="tb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Atendimento direto de fábrica</div>
+  </div>
+</div>
+
+<!-- 4 · POR QUE AGORA -->
+<section class="sec why">
+  <div class="blob b-cy"></div>
+  <div class="wrap why-grid">
+    <div>
+      <span class="kick" style="color:var(--cyan-soft)">Não é aposta</span>
+      <h2 style="margin-top:12px">Você entra num negócio que já dá retorno</h2>
+      <p class="lead">A USTULIMP não é ideia no papel. É fábrica funcionando, com produto que já está no mercado, aprovado por quem usa e revendido por quem já ganha com isso. Você não entra pra testar se dá certo. Entra pra pegar o produto e vender, num negócio que já roda.</p>
+    </div>
+    <div class="why-cards">
+      <div class="whyc"><div class="wc-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21V9l6-3v3l6-3v3l6-3v15z"/></svg></div><div><h4>Preço de fábrica direto</h4><p>Acesso que o revendedor comum não tem.</p></div></div>
+      <div class="whyc"><div class="wc-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 4v6c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6z"/><path d="M9 12l2 2 4-4"/></svg></div><div><h4>Produto que já vende</h4><p>Não é lançamento. O mercado já compra e aprova.</p></div></div>
+      <div class="whyc"><div class="wc-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M21 7v6h-6"/></svg></div><div><h4>Margem que já dá retorno</h4><p>Quem revende hoje já lucra com isso.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 4.5 · CONHEÇA A FÁBRICA -->
+<section class="sec mist">
+  <div class="wrap">
+    <div class="shead">
+      <span class="kick">Por trás da marca</span>
+      <h2>Uma fábrica de verdade, gente de verdade</h2>
+      <p>Cada produto que você revende sai de uma linha de produção real, tocada por pessoas que se importam com qualidade. Não é revenda de fantasma. É indústria com nome, endereço e rosto.</p>
+    </div>
+    <div class="fab-grid">
+      <div class="ph fab-a">
+        <div class="ph-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21V9l6-3v3l6-3v3l6-3v15z"/><path d="M8 21v-5M16 21v-5"/></svg></div>
+        <div class="ph-t">Foto: fachada / frente da fábrica USTULIMP</div>
+        <div class="ph-s">horizontal · destaque</div>
+      </div>
+      <div class="ph fab-b">
+        <div class="ph-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg></div>
+        <div class="ph-t">Foto: linha de produção / máquinas</div>
+        <div class="ph-s">quadrada</div>
+      </div>
+      <div class="ph fab-c">
+        <div class="ph-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7l9-4 9 4v10l-9 4-9-4z"/><path d="M3 7l9 4 9-4M12 11v10"/></svg></div>
+        <div class="ph-t">Foto: estoque / expedição / produtos</div>
+        <div class="ph-s">quadrada</div>
+      </div>
+      <div class="ph fab-d">
+        <div class="ph-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+        <div class="ph-t">Foto: a Marcela e o time da USTULIMP</div>
+        <div class="ph-s">horizontal · rosto humaniza</div>
+      </div>
+    </div>
+    <div class="cadmin">📸 Interno · Trocar cada moldura pela foto real (celular bom já resolve). É o que tira a cara de "sistema" e prova que existe fábrica de verdade. Sem foto real, mantenha as molduras, mas o ideal é captar antes de subir.</div>
+  </div>
+</section>
+
+<!-- 5 · O NEGÓCIO (BENTO) -->
+<section class="sec" id="negocio">
+  <div class="wrap">
+    <div class="shead">
+      <span class="kick">Por que a USTULIMP</span>
+      <h2>Não é bico. É um negócio que gira todo mês.</h2>
+      <p>Você não vende só um produto. Vende algo que o cliente sempre vai precisar. E compra direto de quem fabrica.</p>
+    </div>
+    <div class="bento">
+      <div class="bcard big feat">
+        <div class="bico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M21 7v6h-6"/></svg></div>
+        <div class="big-n">60–100%</div>
+        <h4>Margem de verdade</h4>
+        <p>Você compra a R$1 e vende a R$2. Em limpeza essa conta é real, porque você compra direto de quem fabrica, sem atravessador comendo seu lucro.</p>
+        <div class="bwm"><svg viewBox="0 0 24 24" fill="none"><path d="M12 2C12 2 4 11 4 16a8 8 0 0 0 16 0C20 11 12 2 12 2Z" fill="#fff"/></svg></div>
+      </div>
+      <div class="bcard"><div class="bico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21V9l6-3v3l6-3v3l6-3v15z"/></svg></div><h4>Direto da fábrica</h4><p>Sem intermediário. É isso que sustenta a margem.</p></div>
+      <div class="bcard gr"><div class="bico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg></div><h4>Comece sem loja</h4><p>Seu ponto de venda é onde você estiver.</p></div>
+      <div class="bcard wide"><div class="bico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 4v5h-5"/></svg></div><h4>Produto que gira todo mês</h4><p>Ninguém para de limpar casa. O cliente compra, acaba e volta pra repor. Recompra é a regra, não a exceção.</p></div>
+      <div class="bcard"><div class="bico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M8 4v5M16 4v5"/></svg></div><h4>Linha completa</h4><p>Detergente a amaciante. A lista inteira num fornecedor só.</p></div>
+      <div class="bcard"><div class="bico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div><h4>Fábrica que responde</h4><p>Reposição rápida. Você não perde venda esperando.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 6 · RECOMPRA -->
+<section class="sec recompra">
+  <div class="wrap rec-grid">
+    <div class="rec-copy">
+      <span class="kick">O coração do negócio</span>
+      <h2 style="margin-top:12px">Venda uma vez. Receba todo mês.</h2>
+      <p>Limpeza ninguém deixa de usar. Quem compra seu detergente hoje volta daqui a um mês pra comprar de novo. Você vai <span class="big">juntando cliente que compra sempre</span> e, sem perceber, monta uma renda que se repete todo mês. É isso que transforma revenda em negócio de verdade.</p>
+    </div>
+    <div class="cycle">
+      <div class="cycle-ring">
+        <div class="cstep"><div class="cn">1</div><h5>Cliente compra</h5><p>Leva a linha de limpeza</p></div>
+        <div class="cstep"><div class="cn">2</div><h5>Usa no mês</h5><p>Consumo do dia a dia</p></div>
+        <div class="cstep"><div class="cn">3</div><h5>Acaba o produto</h5><p>Em ~30 dias</p></div>
+        <div class="cstep"><div class="cn">4</div><h5>Volta e repõe</h5><p>Compra de novo, de você</p></div>
+      </div>
+      <div class="cycle-foot">1 cliente = 1 recompra por mês · 30 clientes = 30 recompras por mês</div>
+    </div>
+  </div>
+</section>
+
+<!-- 7 · SIMULADOR -->
+<section class="sec" id="lucro">
+  <div class="wrap">
+    <div class="shead">
+      <span class="kick">Faça as contas</span>
+      <h2>Faz a conta você mesmo</h2>
+      <p>Arrasta aí quanto você quer investir e veja quanto sobra pra você. Sem promessa mirabolante. É a margem de verdade.</p>
+    </div>
+    <div class="sim">
+      <div class="simrow"><label>Quanto você quer investir no 1º pedido <span class="v" id="vInvest">R$ 1.500</span></label><input type="range" id="invest" min="1500" max="8000" step="100" value="1500"></div>
+      <div class="simrow"><label>Margem de revenda <span class="v" id="vMarg">80%</span></label><input type="range" id="marg" min="60" max="100" step="5" value="80"></div>
+      <div class="simout">
+        <div class="simcard sell"><div class="cl">Você revende por</div><div class="cv" id="oSell">R$ 2.700</div></div>
+        <div class="simcard profit"><div class="cl">Seu lucro</div><div class="cv" id="oProfit">R$ 1.200</div></div>
+      </div>
+      <p class="simnote">Pedido mínimo de R$ 1.500. Simulação com base na margem média da linha. <span style="background:var(--mist);color:var(--navy);border-radius:6px;padding:1px 7px;font-weight:600;font-family:'Outfit';font-size:.92em">[[ ajustar faixa real por produto ]]</span></p>
+    </div>
+  </div>
+</section>
+
+<!-- 8 · QUALIDADE / CERTIFICAÇÕES -->
+<section class="sec mist">
+  <div class="wrap">
+    <div class="shead">
+      <span class="kick">Qualidade e segurança</span>
+      <h2>Produto que o cliente aprova e volta pra comprar</h2>
+      <p>A recompra só acontece com produto bom. Fabricação própria, fórmulas regularizadas na ANVISA e responsável técnico por trás. Seu cliente usa, gosta e volta. Você revende com segurança, na loja ou de porta em porta.</p>
+    </div>
+    <div class="cert-grid">
+      <div class="cert"><div class="cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 4v6c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6z"/><path d="M9 12l2 2 4-4"/></svg></div><div><h4>Regularizado na ANVISA</h4><p>Fórmulas dentro da norma de saneantes. Pode revender legal.</p></div></div>
+      <div class="cert"><div class="cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21V9l6-3v3l6-3v3l6-3v15z"/><path d="M8 21v-5M16 21v-5"/></svg></div><div><h4>Fábrica própria</h4><p>Quem faz o produto é quem te vende. Sem intermediário.</p></div></div>
+      <div class="cert"><div class="cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v6l-4 8a4 4 0 0 0 4 6h4a4 4 0 0 0 4-6l-4-8V2M8 2h8"/></svg></div><div><h4>Responsável técnico</h4><p>Químico garantindo formulação e qualidade em cada lote.</p></div></div>
+      <div class="cert"><div class="cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h8l-1 8 10-12h-8z"/></svg></div><div><h4>Alto rendimento</h4><p>Produto concentrado que rende. O cliente sente que vale.</p></div></div>
+      <div class="cert"><div class="cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 4v6c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6z"/></svg></div><div><h4>Seguro pra uso doméstico</h4><p>Feito pra rotina de casa, mercado e comércio.</p></div></div>
+      <div class="cert"><div class="cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21V7l9-4 9 4v14M9 21v-6h6v6M3 11h18"/></svg></div><div><h4>Empresa formal</h4><p>Indústria estabelecida e ativa. Fornecedor de verdade.</p></div></div>
+    </div>
+    <div class="cadmin">⚙️ Interno · Marcela: confirmar cada item e preencher os números reais (nº ANVISA, CRQ do responsável técnico). Só manter os selos que existirem de fato.</div>
+  </div>
+</section>
+
+<!-- 9 · PRODUTOS -->
+<section class="sec" id="produtos">
+  <div class="wrap">
+    <div class="shead">
+      <span class="kick">O que você vai vender</span>
+      <h2>O que todo mundo usa e sempre acaba</h2>
+      <p>Não é moda que passa. É o que some do armário e todo mês volta pra lista de compras.</p>
+    </div>
+  </div>
+  <div class="pnote">[[ Mockups fictícios pra você visualizar. TROCAR pelas fotos e nomes reais dos produtos USTULIMP ]]</div>
+  <div class="wrap"><div class="pgrid" id="prodGrid"></div></div>
+</section>
+
+<!-- 10 · SUPORTE -->
+<section class="sec mist">
+  <div class="wrap">
+    <div class="shead">
+      <span class="kick">Você não vende no escuro</span>
+      <h2>Você não vai vender sozinho</h2>
+      <p>A gente te dá o que precisa pra apresentar e vender. Você não precisa inventar nada do zero.</p>
+    </div>
+    <div class="sup-grid">
+      <div class="sup"><div class="sic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h9l5 5v15H6z"/><path d="M14 2v6h6M9 13h7M9 17h5"/></svg></div><h4>Catálogo e tabela de preço</h4><p>Todos os produtos, preços de fábrica e a margem de cada um, prontos pra apresentar ao cliente.</p></div>
+      <div class="sup"><div class="sic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg></div><h4>Imagens e artes prontas</h4><p>Fotos e posts pra você mandar no WhatsApp e publicar nas redes. Divulga sem depender de designer.</p></div>
+      <div class="sup"><div class="sic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div><h4>Suporte de venda</h4><p>A gente ajuda com preço, argumento e reposição rápida pra você não perder venda.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 11 · COMO FUNCIONA -->
+<section class="sec">
+  <div class="wrap">
+    <div class="shead">
+      <span class="kick">Como funciona</span>
+      <h2>Do primeiro "oi" à primeira venda</h2>
+      <p>Sem burocracia, sem enrolação. Simples de começar.</p>
+    </div>
+    <div class="steps">
+      <div class="step"><div class="sn">1</div><h4>Você garante sua vaga</h4><p>Escolhe seu perfil (revendedor ou loja) e manda seu contato. Em 1 minuto você entra na fila de novos revendedores.</p></div>
+      <div class="step"><div class="sn">2</div><h4>A fábrica te passa tudo</h4><p>Tabela de preço de fábrica, catálogo completo e como funciona a entrega. Direto, sem intermediário.</p></div>
+      <div class="step"><div class="sn">3</div><h4>Você pede e começa a girar</h4><p>Faz seu primeiro pedido, recebe a linha e coloca pra vender. A margem é sua.<br><span class="amt">A partir de R$ 1.500</span></p></div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA STRIP -->
+<section class="sec" style="padding-top:0">
+  <div class="ctastrip">
+    <div class="blob b-gr"></div>
+    <div><h3>Bora começar? Ainda tem vaga na sua região.</h3><p>Cadastro rápido. A gente te chama no WhatsApp com preços e catálogo.</p></div>
+    <button class="btn btn-white" data-cta>Quero revender</button>
+  </div>
+</section>
+
+<!-- 12 · RISCO ZERO -->
+<section class="sec mist">
+  <div class="wrap">
+    <div class="shead">
+      <span class="kick">Risco zero</span>
+      <h2>Pra começar, R$ 1.500. Só isso.</h2>
+      <p>Sem pegadinha e sem custo escondido. O passo pra começar é pequeno e o produto é seu.</p>
+    </div>
+    <div class="risk">
+      <div class="rcard hl"><div class="rico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="13" rx="2"/><path d="M2 10h20"/></svg></div><h4>Pedido mínimo R$ 1.500</h4><p>Você monta seu estoque inicial e já sai vendendo.</p></div>
+      <div class="rcard"><div class="rico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div><h4>Sem mensalidade</h4><p>Sem taxa, sem assinatura. Você paga o produto, ponto.</p></div>
+      <div class="rcard"><div class="rico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div><h4>Sem consignado</h4><p>O produto é seu de verdade. O lucro, todo seu.</p></div>
+      <div class="rcard"><div class="rico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg></div><h4>Sem precisar de loja</h4><p>Comece de casa, pra quem você já conhece.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 13 · DEPOIMENTOS -->
+<section class="sec">
+  <div class="wrap">
+    <div class="shead">
+      <span class="kick">Quem já revende</span>
+      <h2>Gente comum, renda de verdade</h2>
+      <p>Revendedores e lojistas que compram direto da USTULIMP.</p>
+    </div>
+    <div class="tst-grid">
+      <div class="tst"><span class="tst-vid"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>Foto/vídeo real</span><div class="stars">★★★★★</div><p>"Comecei revendendo pros vizinhos pra complementar a renda. Hoje tenho uma carteira de clientes que compra todo mês. A margem é o que me segurou."</p><div class="who2"><div class="av ph-av"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3Z"/><circle cx="12" cy="13" r="3"/></svg></div><div><div class="nm">[[ Nome real ]]</div><div class="ct">[[ Cidade/UF ]] · Revendedor</div></div></div></div>
+      <div class="tst"><span class="tst-vid"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>Foto/vídeo real</span><div class="stars">★★★★★</div><p>"Coloquei a linha na minha mercearia e ela gira sozinha. Comprando direto da fábrica, minha margem em limpeza subiu bem. Cliente elogia e volta."</p><div class="who2"><div class="av ph-av"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3Z"/><circle cx="12" cy="13" r="3"/></svg></div><div><div class="nm">[[ Nome real ]]</div><div class="ct">[[ Cidade/UF ]] · Lojista</div></div></div></div>
+      <div class="tst"><span class="tst-vid"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>Foto/vídeo real</span><div class="stars">★★★★★</div><p>"O que mais gosto é a reposição rápida. Nunca fico sem produto pra vender, e o pessoal já conhece a qualidade. Virou minha renda principal."</p><div class="who2"><div class="av ph-av"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3Z"/><circle cx="12" cy="13" r="3"/></svg></div><div><div class="nm">[[ Nome real ]]</div><div class="ct">[[ Cidade/UF ]] · Revendedora</div></div></div></div>
+    </div>
+    <div class="tst-admin">💬 Interno · Textos de exemplo + molduras de foto/vídeo. Trocar por depoimentos reais com nome, cidade e foto (ou vídeo) da pessoa. Ideal captar com Ivandro & Marcos. Depoimento falso é publicidade enganosa: não subir sem trocar.</div>
+  </div>
+</section>
+
+<!-- 14 · FAQ -->
+<section class="sec mist" id="faq">
+  <div class="wrap">
+    <div class="shead">
+      <span class="kick">Perguntas frequentes</span>
+      <h2>Tirando suas dúvidas</h2>
+      <p>O que quase todo mundo pergunta antes de começar a revender.</p>
+    </div>
+    <div class="faq" id="faqList"></div>
+  </div>
+</section>
+
+<!-- 15 · FORM -->
+<section class="formsec" id="cadastro">
+  <div class="glow g1"></div><div class="glow g2"></div>
+  <div class="wrap">
+    <div class="form-head">
+      <span class="kick">Comece agora</span>
+      <h2>Escolha seu perfil e fale com a gente</h2>
+      <p>Você revende de casa ou tem uma loja? Marque abaixo. Seu contato chega no nosso WhatsApp já etiquetado, e a gente te atende do jeito certo.</p>
+    </div>
+    <div class="card">
+      <div class="beam"></div>
+      <div class="card-in">
+        <div class="toggle" role="tablist">
+          <button class="tg rev active" id="tgRev" role="tab" aria-selected="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg><span class="tt">Quero revender</span><span class="ts">Pessoa física · CPF</span></button>
+          <button class="tg loj" id="tgLoj" role="tab" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l1.5-5h15L21 9M4 9v11h16V9M4 9h16"/><path d="M9 20v-6h6v6"/></svg><span class="tt">Tenho uma loja</span><span class="ts">Empresa · CNPJ</span></button>
+        </div>
+        <div class="fbody">
+          <div class="intro" id="introLine"><b>Revendedor:</b> você compra no seu CPF e revende pra quem quiser. Sem precisar de loja.</div>
+          <div class="field"><label for="nome">Seu nome completo</label><input type="text" id="nome" placeholder="Ex: Maria Silva" autocomplete="name"><div class="msg" id="mNome">Preenche seu nome.</div></div>
+          <div class="two">
+            <div class="field"><label for="whats">WhatsApp (com DDD)</label><input type="tel" id="whats" placeholder="(14) 99999-9999" inputmode="numeric" autocomplete="tel"><div class="msg" id="mWhats">WhatsApp inválido.</div></div>
+            <div class="field"><label for="cidade">Cidade / UF</label><input type="text" id="cidade" placeholder="Ex: Jaú / SP" autocomplete="address-level2"><div class="msg" id="mCidade">Preenche sua cidade.</div></div>
+          </div>
+          <div class="branch show" id="brRev">
+            <div class="field"><label for="cpf">CPF</label><input type="tel" id="cpf" placeholder="000.000.000-00" inputmode="numeric"><div class="msg" id="mCpf">CPF inválido.</div></div>
+            <div class="two">
+              <div class="field"><label for="jaRevende">Já revende algo hoje?</label><select id="jaRevende"><option value="">Selecione</option><option>Não, seria minha primeira vez</option><option>Sim, já revendo outros produtos</option></select></div>
+              <div class="field"><label for="comoVende">Como pretende vender?</label><select id="comoVende"><option value="">Selecione</option><option>Pra vizinhos e conhecidos</option><option>Nas redes sociais / online</option><option>Porta a porta</option><option>Ainda não sei, quero orientação</option></select></div>
+            </div>
+          </div>
+          <div class="branch" id="brLoj">
+            <div class="field"><label for="cnpj">CNPJ</label><input type="tel" id="cnpj" placeholder="00.000.000/0000-00" inputmode="numeric"><div class="msg" id="mCnpj">CNPJ inválido.</div></div>
+            <div class="two">
+              <div class="field"><label for="tipoEstab">Tipo de estabelecimento</label><select id="tipoEstab"><option value="">Selecione</option><option>Mercado / mercearia de bairro</option><option>Loja de produtos de limpeza</option><option>Distribuidora / atacado</option><option>Outro comércio</option></select></div>
+              <div class="field"><label for="jaVendeLinha">Já vende linha de limpeza?</label><select id="jaVendeLinha"><option value="">Selecione</option><option>Sim, quero mais opções</option><option>Não, quero começar</option></select></div>
+            </div>
+          </div>
+          <button class="submit" id="submitBtn"><svg viewBox="0 0 24 24" fill="#fff"><path d="M12 2a10 10 0 0 0-8.7 15l-1.3 5 5.1-1.3A10 10 0 1 0 12 2Zm5.5 14.2c-.2.6-1.2 1.2-1.7 1.2-.5.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.6-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2.1.2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.3 0 .5l-.4.5c-.2.2-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1 2.1 1.4 2.4 1.5.2.1.4.1.5-.1l.7-.8c.2-.2.3-.2.6-.1l1.8.9c.3.1.4.2.5.3.1.2.1.7-.1 1.1Z"/></svg>Enviar e falar no WhatsApp</button>
+          <p class="fine"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Sem compromisso. Seu contato vai direto pro nosso time.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="wrap">
+    <div class="foot-in">
+      <div class="foot-brand">
+        <img class="brand-logo" src="assets/logo-ustulimp.png" alt="Ustulimp" width="180" height="128">
+        <span class="brand-sub">Produtos de limpeza em geral e químico</span>
+      </div>
+      <div class="foot-links">
+        <a href="https://instagram.com/ustulimp" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.2c3.2 0 3.6 0 4.9.1 1.2.1 1.8.3 2.2.4.6.2 1 .5 1.4.9.4.4.7.8.9 1.4.2.4.4 1 .4 2.2.1 1.3.1 1.7.1 4.9s0 3.6-.1 4.9c-.1 1.2-.3 1.8-.4 2.2-.2.6-.5 1-.9 1.4-.4.4-.8.7-1.4.9-.4.2-1 .4-2.2.4-1.3.1-1.7.1-4.9.1s-3.6 0-4.9-.1c-1.2-.1-1.8-.3-2.2-.4-.6-.2-1-.5-1.4-.9-.4-.4-.7-.8-.9-1.4-.2-.4-.4-1-.4-2.2C2.6 15.6 2.6 15.2 2.6 12s0-3.6.1-4.9c.1-1.2.3-1.8.4-2.2.2-.6.5-1 .9-1.4.4-.4.8-.7 1.4-.9.4-.2 1-.4 2.2-.4C8.4 2.2 8.8 2.2 12 2.2Zm0 8.9a4.9 4.9 0 1 0 0 9.8 4.9 4.9 0 0 0 0-9.8Zm0 8.1a3.2 3.2 0 1 1 0-6.4 3.2 3.2 0 0 1 0 6.4Zm6.2-8.3a1.15 1.15 0 1 1-2.3 0 1.15 1.15 0 0 1 2.3 0Z"/></svg>@ustulimp</a>
+      </div>
+    </div>
+    <div class="foot-copy">© 2026 USTULIMP Comércio de Produtos de Limpeza · Fabricamos limpeza. Você lucra revendendo.</div>
+  </div>
+</footer>
+
+<script>
+/* CONFIG [[ PREENCHER: WhatsApp 55+DDD+número ]] */
+const WHATSAPP = "5514000000000";
+
+/* SIMULADOR */
+const brl = n => "R$ " + Math.round(n).toLocaleString('pt-BR');
+const invEl=document.getElementById('invest'), margEl=document.getElementById('marg');
+function calcSim(){const inv=+invEl.value,m=+margEl.value/100,lucro=inv*m,venda=inv+lucro;
+  document.getElementById('vInvest').textContent=brl(inv);document.getElementById('vMarg').textContent=margEl.value+'%';
+  document.getElementById('oSell').textContent=brl(venda);document.getElementById('oProfit').textContent=brl(lucro);}
+invEl.addEventListener('input',calcSim);margEl.addEventListener('input',calcSim);calcSim();
+
+/* PRODUTOS FICTÍCIOS - mockups (trocar por reais) */
+const PRODUTOS=[
+  ["Detergente Neutro","Lava-louças","#2E86C1","#1B5E8A"],
+  ["Desinfetante Lavanda","Perfumado","#8E7CC3","#6A5A9E"],
+  ["Multiuso Total","Limpeza geral","#58C08A","#3E9668"],
+  ["Amaciante Suave","Roupas macias","#E6A2C5","#C97BA6"],
+  ["Água Sanitária","Uso geral","#6FB7E0","#3E90C4"],
+  ["Sabão Líquido","Roupas e pisos","#E8A44B","#C47F2E"],
+  ["Alvejante Alva","Sem cloro","#3AA0B0","#26788A"],
+  ["Limpador Frescor","Aroma que fica","#1DBFD7","#1596AC"]
+];
+function bottleSVG(c,cd,i){return `<svg width="86" height="128" viewBox="0 0 86 128" fill="none">
+  <ellipse cx="43" cy="123" rx="26" ry="4" fill="rgba(1,58,99,.12)"/>
+  <rect x="32" y="4" width="22" height="12" rx="3" fill="${cd}"/><rect x="35" y="1" width="16" height="7" rx="2.5" fill="${c}"/>
+  <path d="M22 16h42a8 8 0 0 1 8 8v88a10 10 0 0 1-10 10H24a10 10 0 0 1-10-10V24a8 8 0 0 1 8-8Z" fill="url(#pb${i})"/>
+  <rect x="18" y="58" width="50" height="52" rx="6" fill="#fff"/>
+  <rect x="18" y="58" width="50" height="15" rx="6" fill="${c}"/><rect x="18" y="69" width="50" height="4" fill="${cd}"/>
+  <text x="43" y="70" text-anchor="middle" font-family="Outfit,sans-serif" font-weight="800" font-size="7" fill="#fff" letter-spacing=".5">USTULIMP</text>
+  <circle cx="43" cy="88" r="9" fill="none" stroke="${c}" stroke-width="1.6"/>
+  <path d="M43 81c0 0-5 6-5 9a5 5 0 0 0 10 0c0-3-5-9-5-9Z" fill="${c}"/>
+  <rect x="26" y="24" width="5" height="76" rx="2.5" fill="#fff" opacity=".3"/>
+  <defs><linearGradient id="pb${i}" x1="14" y1="16" x2="72" y2="122" gradientUnits="userSpaceOnUse"><stop stop-color="${c}"/><stop offset="1" stop-color="${cd}"/></linearGradient></defs>
+</svg>`;}
+document.getElementById('prodGrid').innerHTML=PRODUTOS.map((p,i)=>`<div class="pcard">${bottleSVG(p[2],p[3],i)}<h4>${p[0]}</h4><span>${p[1]}</span></div>`).join('');
+
+/* FAQ */
+const FAQ=[
+  ["Preciso ter CNPJ pra comprar?","Não. Quer revender como pessoa física, compra com <b>CPF</b>. Tem loja ou empresa, compra no <b>CNPJ</b>. Os dois caminhos existem. É só escolher o seu no formulário."],
+  ["Qual é o pedido mínimo?","<b>R$ 1.500 no primeiro pedido.</b> Com esse valor você monta um estoque inicial que já dá pra começar a girar. Depois, você repõe no ritmo que a sua venda pedir."],
+  ["É produto de qualidade? Meu cliente vai gostar?","Sim. Fabricação própria e fórmulas regularizadas na ANVISA. É justamente a qualidade que faz o cliente recomprar todo mês. <span class='flag'>[[ confirmar nº ANVISA ]]</span>"],
+  ["Isso é pirâmide?","Não. Você compra produto de verdade, de uma fábrica de verdade, e revende com margem. Sem mensalidade e sem precisar recrutar ninguém pra ganhar."],
+  ["Como funciona a margem de revenda?","Você compra no preço de fábrica e revende no preço de mercado. Dependendo do produto, dá de <b>60% a 100% de lucro</b> em cima do que pagou. <span class='flag'>[[ confirmar faixa por produto ]]</span>"],
+  ["Preciso ter loja física?","Não. Muita gente começa vendendo pra vizinhos, parentes e no grupo do bairro. A loja é opcional. Dá pra crescer bem sem ela."],
+  ["Vocês entregam na minha região?","Hoje atendemos <span class='flag'>[[ regiões / frete ]]</span>. Me chama no WhatsApp com sua cidade que a gente confirma na hora se dá pra entregar ou combinar a retirada."],
+  ["Como recebo e faço o pagamento?","<span class='flag'>[[ formas de pagamento e prazo ]]</span> Depois do cadastro, a gente te explica tudo direitinho pelo WhatsApp."]
+];
+const faqEl=document.getElementById('faqList');
+faqEl.innerHTML=FAQ.map(f=>`<div class="qa"><button class="q">${f[0]}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button><div class="a"><div class="a-in">${f[1]}</div></div></div>`).join('');
+faqEl.querySelectorAll('.qa').forEach(qa=>{qa.querySelector('.q').addEventListener('click',()=>{const open=qa.classList.contains('open');faqEl.querySelectorAll('.qa').forEach(x=>{x.classList.remove('open');x.querySelector('.a').style.maxHeight=null});if(!open){qa.classList.add('open');const a=qa.querySelector('.a');a.style.maxHeight=a.scrollHeight+'px'}});});
+
+/* TOGGLE */
+let perfil='rev';
+const tgRev=document.getElementById('tgRev'),tgLoj=document.getElementById('tgLoj'),brRev=document.getElementById('brRev'),brLoj=document.getElementById('brLoj'),introLine=document.getElementById('introLine');
+function setPerfil(p){perfil=p;const rev=p==='rev';tgRev.classList.toggle('active',rev);tgRev.setAttribute('aria-selected',rev);tgLoj.classList.toggle('active',!rev);tgLoj.setAttribute('aria-selected',!rev);brRev.classList.toggle('show',rev);brLoj.classList.toggle('show',!rev);introLine.innerHTML=rev?"<b>Revendedor:</b> você compra no seu CPF e revende pra quem quiser. Sem precisar de loja.":"<b>Lojista:</b> você compra no CNPJ pra abastecer sua loja com uma linha que gira e dá margem.";}
+tgRev.onclick=()=>setPerfil('rev');tgLoj.onclick=()=>setPerfil('loj');
+document.querySelectorAll('[data-cta]').forEach(b=>{b.onclick=()=>document.getElementById('cadastro').scrollIntoView({behavior:'smooth'})});
+document.querySelectorAll('[data-scroll]').forEach(b=>{b.onclick=()=>{const t=document.querySelector(b.dataset.scroll);if(t)t.scrollIntoView({behavior:'smooth'})}});
+
+/* MÁSCARAS + VALIDADORES */
+const onlyD=s=>s.replace(/\D/g,'');
+function maskPhone(v){v=onlyD(v).slice(0,11);if(v.length>10)return v.replace(/(\d{2})(\d{5})(\d{4})/,'($1) $2-$3');if(v.length>6)return v.replace(/(\d{2})(\d{4})(\d{0,4})/,'($1) $2-$3');if(v.length>2)return v.replace(/(\d{2})(\d{0,5})/,'($1) $2');return v.replace(/(\d*)/,'($1');}
+function maskCPF(v){v=onlyD(v).slice(0,11);return v.replace(/(\d{3})(\d)/,'$1.$2').replace(/(\d{3})(\d)/,'$1.$2').replace(/(\d{3})(\d{1,2})$/,'$1-$2');}
+function maskCNPJ(v){v=onlyD(v).slice(0,14);return v.replace(/(\d{2})(\d)/,'$1.$2').replace(/(\d{3})(\d)/,'$1.$2').replace(/(\d{3})(\d)/,'$1/$2').replace(/(\d{4})(\d{1,2})$/,'$1-$2');}
+const bind=(id,fn)=>{const el=document.getElementById(id);el.addEventListener('input',()=>el.value=fn(el.value));};
+bind('whats',maskPhone);bind('cpf',maskCPF);bind('cnpj',maskCNPJ);
+function validaCPF(cpf){cpf=onlyD(cpf);if(cpf.length!==11||/^(\d)\1{10}$/.test(cpf))return false;let s=0;for(let i=0;i<9;i++)s+=+cpf[i]*(10-i);let d=11-s%11;if(d>9)d=0;if(d!==+cpf[9])return false;s=0;for(let i=0;i<10;i++)s+=+cpf[i]*(11-i);d=11-s%11;if(d>9)d=0;return d===+cpf[10];}
+function validaCNPJ(c){c=onlyD(c);if(c.length!==14||/^(\d)\1{13}$/.test(c))return false;const calc=x=>{let n=0,p=x-7;for(let i=x;i>=1;i--){n+=c[x-i]*p--;if(p<2)p=9;}const r=n%11;return r<2?0:11-r;};return calc(12)===+c[12]&&calc(13)===+c[13];}
+const validPhone=v=>onlyD(v).length>=10&&onlyD(v).length<=11;
+function showErr(inputId,msgId,cond){const inp=document.getElementById(inputId),msg=document.getElementById(msgId);if(cond){inp.classList.add('err');msg.classList.add('show');return false;}inp.classList.remove('err');msg.classList.remove('show');return true;}
+
+/* SUBMIT → WHATSAPP */
+document.getElementById('submitBtn').addEventListener('click',()=>{
+  const nome=document.getElementById('nome').value.trim(),whats=document.getElementById('whats').value.trim(),cidade=document.getElementById('cidade').value.trim();
+  let ok=true;
+  ok=showErr('nome','mNome',nome.length<3)&&ok;ok=showErr('whats','mWhats',!validPhone(whats))&&ok;ok=showErr('cidade','mCidade',cidade.length<2)&&ok;
+  let msg='';
+  if(perfil==='rev'){const cpf=document.getElementById('cpf').value.trim(),jr=document.getElementById('jaRevende').value,cv=document.getElementById('comoVende').value;ok=showErr('cpf','mCpf',!validaCPF(cpf))&&ok;if(!ok)return;
+    msg=`Olá! Quero ser revendedor da USTULIMP.\n\n*Perfil:* Revendedor (CPF)\n*Nome:* ${nome}\n*CPF:* ${cpf}\n*WhatsApp:* ${whats}\n*Cidade:* ${cidade}\n*Já revende hoje:* ${jr||'não informado'}\n*Como pretende vender:* ${cv||'não informado'}`;
+  } else {const cnpj=document.getElementById('cnpj').value.trim(),te=document.getElementById('tipoEstab').value,jv=document.getElementById('jaVendeLinha').value;ok=showErr('cnpj','mCnpj',!validaCNPJ(cnpj))&&ok;if(!ok)return;
+    msg=`Olá! Tenho uma loja e quero comprar da USTULIMP.\n\n*Perfil:* Lojista (CNPJ)\n*Nome:* ${nome}\n*CNPJ:* ${cnpj}\n*WhatsApp:* ${whats}\n*Cidade:* ${cidade}\n*Tipo de estabelecimento:* ${te||'não informado'}\n*Já vende linha de limpeza:* ${jv||'não informado'}`;}
+  if(!ok)return;
+  window.open(`https://wa.me/${WHATSAPP}?text=${encodeURIComponent(msg)}`,'_blank');
+});
+
+/* SCROLL REVEAL */
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.style.opacity=1;e.target.style.transform='none';io.unobserve(e.target)}}),{threshold:.1});
+document.querySelectorAll('.who,.bcard,.whyc,.cert,.pcard,.sup,.step,.rcard,.tst,.qa').forEach((el,i)=>{if(matchMedia('(prefers-reduced-motion:reduce)').matches)return;el.style.opacity=0;el.style.transform='translateY(18px)';el.style.transition=`opacity .5s ${(i%6)*.05}s ease, transform .5s ${(i%6)*.05}s ease`;io.observe(el);});
+</script>
+</body>
+</html>
