@@ -1,0 +1,61 @@
+# USTULIMP LP · configuracao servidor
+# NAO tocar em nada relacionado a email (~/mail, valiases, forwarders, filtros)
+
+# -- Redirect 301 do subpath antigo /revendedor pra raiz (preserva SEO)
+RewriteEngine On
+RewriteCond %{REQUEST_URI} ^/revendedor(/.*)?$
+RewriteRule ^revendedor/?(.*)$ /$1 [R=301,L]
+
+# -- Forca HTTPS (evita mixed content e ajuda SEO)
+RewriteCond %{HTTPS} !=on
+RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+
+# -- Forca dominio canonico sem www (pra bater com <link canonical>)
+RewriteCond %{HTTP_HOST} ^www\.ustulimp\.com\.br$ [NC]
+RewriteRule ^(.*)$ https://ustulimp.com.br/$1 [R=301,L]
+
+# -- Se pedirem obrigado sem .html, redireciona
+RewriteRule ^obrigado/?$ /obrigado.html [L]
+
+# -- Compressao GZIP (Apache mod_deflate)
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css text/javascript application/javascript application/json application/xml application/rss+xml image/svg+xml
+</IfModule>
+
+# -- Cache headers longos pra assets estaticos (1 ano)
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType image/webp "access plus 1 year"
+  ExpiresByType image/png "access plus 1 year"
+  ExpiresByType image/jpeg "access plus 1 year"
+  ExpiresByType image/svg+xml "access plus 1 year"
+  ExpiresByType text/css "access plus 1 month"
+  ExpiresByType application/javascript "access plus 1 month"
+  ExpiresByType font/woff2 "access plus 1 year"
+  ExpiresByType text/html "access plus 0 seconds"
+</IfModule>
+
+# -- Cache-Control (fallback pra hosts sem mod_expires)
+<IfModule mod_headers.c>
+  <FilesMatch "\.(webp|png|jpg|jpeg|svg|woff2)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+  <FilesMatch "\.html$">
+    Header set Cache-Control "no-cache, must-revalidate"
+  </FilesMatch>
+  # Seguranca basica
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set X-Frame-Options "SAMEORIGIN"
+</IfModule>
+
+# -- MIME types corretos pra WebP (algumas versoes antigas do Apache nao tem)
+AddType image/webp .webp
+
+# -- Pagina de erro 404 pra rotas fantasma
+ErrorDocument 404 /index.html
+
+# -- Bloqueia acesso a arquivos sensiveis
+<FilesMatch "^\.(git|env|htaccess|htpasswd)|\.(gs|md)$">
+  Require all denied
+</FilesMatch>
