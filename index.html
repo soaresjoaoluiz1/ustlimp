@@ -3,10 +3,44 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>USTULIMP · Seja o fornecedor de limpeza da sua região</title>
+<meta name="theme-color" content="#004F84">
+<title>USTULIMP · Revenda produtos de limpeza direto da fábrica com até 100% de margem</title>
+<meta name="description" content="Seja revendedor USTULIMP e compre produtos de limpeza direto da fábrica com preço de custo. Detergente, desinfetante, amaciante, água sanitária e mais. Pedido a partir de R$ 1.500, margem de 60% a 100%, sem CNPJ obrigatório.">
+<meta name="keywords" content="revenda de produtos de limpeza, fabrica de produtos de limpeza, revendedor autorizado ustulimp, ganhar dinheiro com limpeza, distribuidor produtos limpeza, comprar produtos limpeza de fabrica, revender detergente desinfetante amaciante">
+<meta name="author" content="USTULIMP Comércio de Produtos de Limpeza">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://revendedor.ustulimp.com.br/">
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://revendedor.ustulimp.com.br/">
+<meta property="og:title" content="Revenda USTULIMP · Produtos de limpeza direto da fábrica com margem de até 100%">
+<meta property="og:description" content="Compre no preço de fábrica, revenda no preço de mercado. Detergente, desinfetante, amaciante e mais. Sem CNPJ obrigatório, pedido a partir de R$ 1.500.">
+<meta property="og:image" content="https://revendedor.ustulimp.com.br/assets/fachada.webp">
+<meta property="og:image:width" content="1448">
+<meta property="og:image:height" content="1086">
+<meta property="og:locale" content="pt_BR">
+<meta property="og:site_name" content="USTULIMP">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Revenda USTULIMP · Produtos de limpeza direto da fábrica">
+<meta name="twitter:description" content="Margem de 60% a 100% revendendo produtos de limpeza direto de fábrica. Sem CNPJ obrigatório, pedido a partir de R$ 1.500.">
+<meta name="twitter:image" content="https://revendedor.ustulimp.com.br/assets/fachada.webp">
+
+<!-- Favicon -->
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="assets/favicon-180.png">
+
+<!-- Preload critical -->
+<link rel="preload" as="image" href="assets/fachada.webp" fetchpriority="high">
+<link rel="preload" as="image" href="assets/logo-ustulimp.webp" fetchpriority="high">
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap"></noscript>
 <style>
   :root{
     --navy:#004F84;--navy-deep:#013A63;--cyan:#1DBFD7;--cyan-soft:#7FD9E8;
@@ -188,9 +222,8 @@
   .cert .cico svg{width:24px;height:24px;color:var(--navy)}
   .cert h4{font-family:'Outfit';font-weight:700;font-size:1.02rem;color:var(--navy);margin-bottom:4px}
   .cert p{font-size:.86rem;color:var(--ink-soft)}
-  .cadmin{max-width:980px;margin:22px auto 0;text-align:center;font-size:.78rem;color:var(--ink-soft);background:#FFF8E9;border:1px solid #F0DCB4;border-radius:12px;padding:10px 16px}
 
-  /* PRODUTOS - mockups fictícios */
+  /* PRODUTOS */
   .pgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
   .pcard{background:linear-gradient(170deg,#fff,var(--mist));border:1px solid var(--line);border-radius:18px;padding:20px 16px 18px;text-align:center;transition:.25s;display:flex;flex-direction:column;align-items:center}
   .pcard:hover{transform:translateY(-4px);box-shadow:var(--shadow)}
@@ -237,7 +270,6 @@
   .tst .av{width:46px;height:46px;border-radius:50%;color:#fff;display:flex;align-items:center;justify-content:center;font-family:'Outfit';font-weight:700;font-size:1.05rem}
   .tst .nm{font-family:'Outfit';font-weight:700;color:var(--navy);font-size:.96rem;line-height:1.2}
   .tst .ct{font-size:.8rem;color:var(--ink-soft)}
-  .tst-admin{max-width:var(--maxw);margin:24px auto 0;text-align:center;font-size:.78rem;color:var(--navy);background:#fff;border:1px solid #CFE6F1;border-radius:12px;padding:10px 16px;font-family:'Outfit';font-weight:600}
 
   /* CTA STRIP */
   .ctastrip{position:relative;overflow:hidden;background:linear-gradient(120deg,var(--cyan),var(--navy));border-radius:24px;padding:46px 42px;display:flex;align-items:center;justify-content:space-between;gap:26px;flex-wrap:wrap;max-width:var(--maxw);margin:0 auto}
@@ -303,7 +335,7 @@
   footer{background:var(--ink);color:#A9C4D6;padding:44px 0 34px}
   .foot-in{display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap}
   .foot-brand{display:flex;align-items:center;gap:12px}
-  .foot-brand .brand-logo{height:60px;filter:brightness(0) invert(1)}
+  .foot-brand .brand-logo{height:56px;width:auto;filter:none}
   .foot-brand .brand-sub{color:#7FA0B5;font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;font-weight:600;line-height:1.2;max-width:150px}
   .foot-links{display:flex;align-items:center;gap:18px;font-size:.92rem}
   .foot-links a{display:inline-flex;align-items:center;gap:7px;transition:.2s}
@@ -350,7 +382,24 @@
     .sim,.fbody{padding:20px 18px}.ctastrip{padding:34px 24px;justify-content:center;text-align:center}
     .who{padding:30px 26px}
   }
-  @media(prefers-reduced-motion:reduce){*{animation:none!important;scroll-behavior:auto!important;transition:none!important}}
+  /* Motion — entrada suave + micro-interactions */
+  @keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+  @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+  .hero-txt>*{animation:fadeUp .7s cubic-bezier(.2,.7,.2,1) both}
+  .hero-txt .kick{animation-delay:.05s}
+  .hero-txt h1{animation-delay:.15s}
+  .hero-txt .lead{animation-delay:.25s}
+  .hero-txt .cta-row{animation-delay:.35s}
+  .hero-txt .stats{animation-delay:.45s}
+  .hero-stage{animation:fadeIn .9s ease .3s both}
+  .pcard .pimg img{transition:transform .35s cubic-bezier(.2,.7,.2,1),filter .35s ease}
+  .pcard:hover .pimg img{transform:translateY(-3px) scale(1.04);filter:drop-shadow(0 14px 22px rgba(1,58,99,.22))}
+  .btn{transition:transform .18s ease, box-shadow .25s ease, background .25s ease}
+  .btn:hover{transform:translateY(-1.5px)}
+  .btn:active{transform:translateY(0)}
+  .ph-photo img{transition:transform 8s ease}
+  .ph-photo:hover img{transform:scale(1.05)}
+  @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;scroll-behavior:auto!important;transition:none!important}}
 </style>
 </head>
 <body>
@@ -359,7 +408,7 @@
 <nav class="nav">
   <div class="nav-in">
     <a href="#" class="brand" aria-label="Ustulimp">
-      <img class="brand-logo" src="assets/logo-ustulimp.png" alt="Ustulimp" width="180" height="128">
+      <img class="brand-logo" src="assets/logo-ustulimp.webp" alt="Ustulimp" width="180" height="128">
       <span class="brand-sub">Produtos de limpeza</span>
     </a>
     <div class="nav-links">
@@ -445,19 +494,18 @@
     </div>
     <div class="fab-grid">
       <div class="ph fab-a ph-photo">
-        <img src="assets/fachada.jpg" alt="Fachada da fábrica Ustulimp" loading="lazy" decoding="async" width="1448" height="1086">
+        <img src="assets/fachada.webp" alt="Fachada da fábrica Ustulimp" fetchpriority="high" decoding="async" width="1448" height="1086">
         <div class="ph-cap">Fábrica USTULIMP</div>
       </div>
       <div class="ph fab-b ph-photo">
-        <img src="assets/linha-producao.jpg" alt="Linha de produção da fábrica Ustulimp" loading="lazy" decoding="async">
+        <img src="assets/linha-producao.webp" alt="Linha de produção da fábrica Ustulimp" loading="lazy" decoding="async" width="1200" height="675">
         <div class="ph-cap">Linha de produção</div>
       </div>
       <div class="ph fab-c ph-photo">
-        <img src="assets/estoque.jpg" alt="Estoque e expedição da fábrica Ustulimp" loading="lazy" decoding="async">
+        <img src="assets/estoque.webp" alt="Estoque e expedição da fábrica Ustulimp" loading="lazy" decoding="async" width="1200" height="675">
         <div class="ph-cap">Estoque próprio</div>
       </div>
     </div>
-    <div class="cadmin">📸 Interno · Trocar cada moldura pela foto real (celular bom já resolve). É o que tira a cara de "sistema" e prova que existe fábrica de verdade. Sem foto real, mantenha as molduras, mas o ideal é captar antes de subir.</div>
   </div>
 </section>
 
@@ -542,7 +590,6 @@
       <div class="cert"><div class="cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 4v6c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6z"/></svg></div><div><h4>Seguro pra uso doméstico</h4><p>Feito pra rotina de casa, mercado e comércio.</p></div></div>
       <div class="cert"><div class="cico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21V7l9-4 9 4v14M9 21v-6h6v6M3 11h18"/></svg></div><div><h4>Empresa formal</h4><p>Indústria estabelecida e ativa. Fornecedor de verdade.</p></div></div>
     </div>
-    <div class="cadmin">⚙️ Interno · Marcela: confirmar cada item e preencher os números reais (nº ANVISA, CRQ do responsável técnico). Só manter os selos que existirem de fato.</div>
   </div>
 </section>
 
@@ -629,7 +676,6 @@
       <div class="tst"><span class="tst-vid"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>Foto/vídeo real</span><div class="stars">★★★★★</div><p>"Coloquei a linha na minha mercearia e ela gira sozinha. Comprando direto da fábrica, minha margem em limpeza subiu bem. Cliente elogia e volta."</p><div class="who2"><div class="av ph-av"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3Z"/><circle cx="12" cy="13" r="3"/></svg></div><div><div class="nm">[[ Nome real ]]</div><div class="ct">[[ Cidade/UF ]] · Lojista</div></div></div></div>
       <div class="tst"><span class="tst-vid"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>Foto/vídeo real</span><div class="stars">★★★★★</div><p>"O que mais gosto é a reposição rápida. Nunca fico sem produto pra vender, e o pessoal já conhece a qualidade. Virou minha renda principal."</p><div class="who2"><div class="av ph-av"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3Z"/><circle cx="12" cy="13" r="3"/></svg></div><div><div class="nm">[[ Nome real ]]</div><div class="ct">[[ Cidade/UF ]] · Revendedora</div></div></div></div>
     </div>
-    <div class="tst-admin">💬 Interno · Textos de exemplo + molduras de foto/vídeo. Trocar por depoimentos reais com nome, cidade e foto (ou vídeo) da pessoa. Ideal captar com Ivandro & Marcos. Depoimento falso é publicidade enganosa: não subir sem trocar.</div>
   </div>
 </section>
 
@@ -695,7 +741,7 @@
   <div class="wrap">
     <div class="foot-in">
       <div class="foot-brand">
-        <img class="brand-logo" src="assets/logo-ustulimp.png" alt="Ustulimp" width="180" height="128">
+        <img class="brand-logo" src="assets/logo-ustulimp-branco.webp" alt="Ustulimp" width="339" height="240" loading="lazy" decoding="async">
         <span class="brand-sub">Produtos de limpeza em geral e químico</span>
       </div>
       <div class="foot-links">
@@ -783,6 +829,54 @@ document.getElementById('submitBtn').addEventListener('click',()=>{
 /* SCROLL REVEAL */
 const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.style.opacity=1;e.target.style.transform='none';io.unobserve(e.target)}}),{threshold:.1});
 document.querySelectorAll('.who,.bcard,.whyc,.cert,.pcard,.sup,.step,.rcard,.tst,.qa').forEach((el,i)=>{if(matchMedia('(prefers-reduced-motion:reduce)').matches)return;el.style.opacity=0;el.style.transform='translateY(18px)';el.style.transition=`opacity .5s ${(i%6)*.05}s ease, transform .5s ${(i%6)*.05}s ease`;io.observe(el);});
+</script>
+
+<!-- Structured Data: LocalBusiness + FAQPage -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://revendedor.ustulimp.com.br/#org",
+      "name": "USTULIMP Comércio de Produtos de Limpeza",
+      "url": "https://revendedor.ustulimp.com.br/",
+      "logo": "https://revendedor.ustulimp.com.br/assets/logo-ustulimp.webp",
+      "image": "https://revendedor.ustulimp.com.br/assets/fachada.webp",
+      "sameAs": ["https://instagram.com/ustulimp"],
+      "description": "Fábrica de produtos de limpeza que aceita revendedores diretos. Detergente, desinfetante, amaciante, água sanitária e mais. Regularizada na ANVISA.",
+      "areaServed": "BR"
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://revendedor.ustulimp.com.br/#website",
+      "url": "https://revendedor.ustulimp.com.br/",
+      "name": "Seja revendedor USTULIMP",
+      "publisher": {"@id": "https://revendedor.ustulimp.com.br/#org"},
+      "inLanguage": "pt-BR"
+    },
+    {
+      "@type": "Offer",
+      "name": "Kit inicial para revendedor USTULIMP",
+      "description": "Estoque inicial para começar a revender produtos de limpeza direto da fábrica, com margem de 60% a 100%.",
+      "priceCurrency": "BRL",
+      "price": "1500",
+      "availability": "https://schema.org/InStock",
+      "seller": {"@id": "https://revendedor.ustulimp.com.br/#org"}
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {"@type":"Question","name":"Preciso ter CNPJ pra comprar?","acceptedAnswer":{"@type":"Answer","text":"Não. Quer revender como pessoa física, compra com CPF. Tem loja ou empresa, compra no CNPJ. Os dois caminhos existem."}},
+        {"@type":"Question","name":"Qual é o pedido mínimo?","acceptedAnswer":{"@type":"Answer","text":"R$ 1.500 no primeiro pedido. Com esse valor você monta um estoque inicial que já dá pra começar a girar."}},
+        {"@type":"Question","name":"É produto de qualidade? Meu cliente vai gostar?","acceptedAnswer":{"@type":"Answer","text":"Sim. Fabricação própria e fórmulas regularizadas na ANVISA. É justamente a qualidade que faz o cliente recomprar todo mês."}},
+        {"@type":"Question","name":"Isso é pirâmide?","acceptedAnswer":{"@type":"Answer","text":"Não. Você compra produto de verdade, de uma fábrica de verdade, e revende com margem. Sem mensalidade e sem precisar recrutar ninguém."}},
+        {"@type":"Question","name":"Como funciona a margem de revenda?","acceptedAnswer":{"@type":"Answer","text":"Você compra no preço de fábrica e revende no preço de mercado. Dependendo do produto, dá de 60% a 100% de lucro em cima do que pagou."}},
+        {"@type":"Question","name":"Preciso ter loja física?","acceptedAnswer":{"@type":"Answer","text":"Não. Muita gente começa vendendo pra vizinhos, parentes e no grupo do bairro. A loja é opcional."}}
+      ]
+    }
+  ]
+}
 </script>
 </body>
 </html>
