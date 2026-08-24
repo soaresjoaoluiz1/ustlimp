@@ -7,7 +7,9 @@ RewriteCond %{REQUEST_URI} ^/revendedor(/.*)?$
 RewriteRule ^revendedor/?(.*)$ /$1 [R=301,L]
 
 # -- Forca HTTPS (evita mixed content e ajuda SEO)
+# IMPORTANTE: exclui /.well-known/ pro Let's Encrypt renovar cert sem HTTPS
 RewriteCond %{HTTPS} !=on
+RewriteCond %{REQUEST_URI} !^/\.well-known/
 RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
 
 # -- Forca dominio canonico sem www (pra bater com <link canonical>)
