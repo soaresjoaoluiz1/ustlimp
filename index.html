@@ -37,6 +37,22 @@
 <link rel="preload" as="image" href="assets/logo-ustulimp.webp" fetchpriority="high">
 <link rel="preload" as="image" href="assets/fachada.webp">
 
+<!-- Meta Pixel Code -->
+<script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '3598380517000959');
+fbq('track', 'PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=3598380517000959&ev=PageView&noscript=1" alt=""/></noscript>
+<!-- End Meta Pixel Code -->
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap">
@@ -730,6 +746,16 @@
               <div class="field"><label for="jaVendeLinha">Já vende linha de limpeza?</label><select id="jaVendeLinha"><option value="">Selecione</option><option>Sim, quero mais opções</option><option>Não, quero começar</option></select></div>
             </div>
           </div>
+          <!-- hidden fields de tracking (preenchidos via JS) -->
+          <input type="hidden" id="utm_source" name="utm_source">
+          <input type="hidden" id="utm_medium" name="utm_medium">
+          <input type="hidden" id="utm_campaign" name="utm_campaign">
+          <input type="hidden" id="utm_content" name="utm_content">
+          <input type="hidden" id="utm_term" name="utm_term">
+          <input type="hidden" id="fbclid" name="fbclid">
+          <input type="hidden" id="gclid" name="gclid">
+          <input type="hidden" id="referrer" name="referrer">
+          <input type="hidden" id="landing_page" name="landing_page">
           <button class="submit" id="submitBtn"><svg viewBox="0 0 24 24" fill="#fff"><path d="M12 2a10 10 0 0 0-8.7 15l-1.3 5 5.1-1.3A10 10 0 1 0 12 2Zm5.5 14.2c-.2.6-1.2 1.2-1.7 1.2-.5.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.6-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2.1.2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.3 0 .5l-.4.5c-.2.2-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1 2.1 1.4 2.4 1.5.2.1.4.1.5-.1l.7-.8c.2-.2.3-.2.6-.1l1.8.9c.3.1.4.2.5.3.1.2.1.7-.1 1.1Z"/></svg>Enviar e falar no WhatsApp</button>
           <p class="fine"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Sem compromisso. Seu contato vai direto pro nosso time.</p>
         </div>
@@ -773,8 +799,46 @@
 </footer>
 
 <script>
-/* CONFIG [[ PREENCHER: WhatsApp 55+DDD+número ]] */
-const WHATSAPP = "5514000000000";
+/* CONFIG */
+const WHATSAPP = "5514000000000"; // [[ PREENCHER: WhatsApp 55+DDD+número ]]
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/COLAR-URL-DO-DEPLOY-AQUI/exec"; // [[ PREENCHER apos publicar apps-script.gs ]]
+const PAGE_LOAD_TS = Date.now();
+
+/* CAPTURA UTMs / fbclid / gclid — persiste em sessionStorage (mantem se user rolar) */
+(function captureTracking(){
+  const url = new URL(location.href);
+  const keys = ['utm_source','utm_medium','utm_campaign','utm_content','utm_term','fbclid','gclid'];
+  const stored = {};
+  try { Object.assign(stored, JSON.parse(sessionStorage.getItem('ustulimp_track') || '{}')); } catch {}
+  keys.forEach(k => {
+    const v = url.searchParams.get(k);
+    if (v) stored[k] = v;
+    const el = document.getElementById(k);
+    if (el) el.value = stored[k] || '';
+  });
+  try { sessionStorage.setItem('ustulimp_track', JSON.stringify(stored)); } catch {}
+  const refEl = document.getElementById('referrer');
+  const lpEl = document.getElementById('landing_page');
+  if (refEl) refEl.value = document.referrer || '';
+  if (lpEl) lpEl.value = location.href;
+})();
+
+/* Track ViewContent quando user rola pra secao de produtos */
+(function trackViewContent(){
+  if (!window.fbq) return;
+  let fired = false;
+  const trigger = () => { if (fired) return; fired = true; fbq('track','ViewContent',{content_name:'LP Revendedor',content_category:'Revenda'}); };
+  const obs = new IntersectionObserver(es => es.forEach(e => e.isIntersecting && trigger()), {threshold:0.3});
+  const t = document.getElementById('produtos'); if (t) obs.observe(t);
+  setTimeout(trigger, 15000); // fallback: se ficar 15s na pagina
+})();
+
+/* Track InitiateCheckout ao clicar em CTA "Quero revender" */
+document.addEventListener('DOMContentLoaded',()=>{
+  document.querySelectorAll('[data-cta]').forEach(b=>{
+    b.addEventListener('click',()=>{ window.fbq && fbq('track','InitiateCheckout',{content_name:'CTA revender'}); },{once:false});
+  });
+});
 
 /* SIMULADOR */
 const brl = n => "R$ " + Math.round(n).toLocaleString('pt-BR');
@@ -832,18 +896,80 @@ function validaCNPJ(c){c=onlyD(c);if(c.length!==14||/^(\d)\1{13}$/.test(c))retur
 const validPhone=v=>onlyD(v).length>=10&&onlyD(v).length<=11;
 function showErr(inputId,msgId,cond){const inp=document.getElementById(inputId),msg=document.getElementById(msgId);if(cond){inp.classList.add('err');msg.classList.add('show');return false;}inp.classList.remove('err');msg.classList.remove('show');return true;}
 
-/* SUBMIT → WHATSAPP */
-document.getElementById('submitBtn').addEventListener('click',()=>{
+/* SUBMIT → Apps Script (Sheets + CRM sync) → fbq('Lead') → obrigado.html */
+document.getElementById('submitBtn').addEventListener('click',async ()=>{
+  const btn=document.getElementById('submitBtn');
   const nome=document.getElementById('nome').value.trim(),whats=document.getElementById('whats').value.trim(),cidade=document.getElementById('cidade').value.trim();
   let ok=true;
   ok=showErr('nome','mNome',nome.length<3)&&ok;ok=showErr('whats','mWhats',!validPhone(whats))&&ok;ok=showErr('cidade','mCidade',cidade.length<2)&&ok;
-  let msg='';
-  if(perfil==='rev'){const cpf=document.getElementById('cpf').value.trim(),jr=document.getElementById('jaRevende').value,cv=document.getElementById('comoVende').value;ok=showErr('cpf','mCpf',!validaCPF(cpf))&&ok;if(!ok)return;
+  const val=id=>document.getElementById(id).value.trim();
+  let cpf='',cnpj='',jr='',cv='',te='',jv='',msg='';
+  if(perfil==='rev'){
+    cpf=val('cpf');jr=val('jaRevende');cv=val('comoVende');
+    ok=showErr('cpf','mCpf',!validaCPF(cpf))&&ok;
+    if(!ok)return;
     msg=`Olá! Quero ser revendedor da USTULIMP.\n\n*Perfil:* Revendedor (CPF)\n*Nome:* ${nome}\n*CPF:* ${cpf}\n*WhatsApp:* ${whats}\n*Cidade:* ${cidade}\n*Já revende hoje:* ${jr||'não informado'}\n*Como pretende vender:* ${cv||'não informado'}`;
-  } else {const cnpj=document.getElementById('cnpj').value.trim(),te=document.getElementById('tipoEstab').value,jv=document.getElementById('jaVendeLinha').value;ok=showErr('cnpj','mCnpj',!validaCNPJ(cnpj))&&ok;if(!ok)return;
-    msg=`Olá! Tenho uma loja e quero comprar da USTULIMP.\n\n*Perfil:* Lojista (CNPJ)\n*Nome:* ${nome}\n*CNPJ:* ${cnpj}\n*WhatsApp:* ${whats}\n*Cidade:* ${cidade}\n*Tipo de estabelecimento:* ${te||'não informado'}\n*Já vende linha de limpeza:* ${jv||'não informado'}`;}
+  } else {
+    cnpj=val('cnpj');te=val('tipoEstab');jv=val('jaVendeLinha');
+    ok=showErr('cnpj','mCnpj',!validaCNPJ(cnpj))&&ok;
+    if(!ok)return;
+    msg=`Olá! Tenho uma loja e quero comprar da USTULIMP.\n\n*Perfil:* Lojista (CNPJ)\n*Nome:* ${nome}\n*CNPJ:* ${cnpj}\n*WhatsApp:* ${whats}\n*Cidade:* ${cidade}\n*Tipo de estabelecimento:* ${te||'não informado'}\n*Já vende linha de limpeza:* ${jv||'não informado'}`;
+  }
   if(!ok)return;
-  window.open(`https://wa.me/${WHATSAPP}?text=${encodeURIComponent(msg)}`,'_blank');
+
+  btn.disabled=true;btn.style.opacity=.6;
+  const originalHtml=btn.innerHTML;btn.innerHTML='Enviando...';
+
+  // Monta payload completo pra planilha + CRM
+  const payload = {
+    timestamp: new Date().toISOString(),
+    perfil: perfil==='rev'?'Revendedor':'Lojista',
+    nome, whatsapp: whats, cidade,
+    cpf_cnpj: perfil==='rev'?cpf:cnpj,
+    cpf: perfil==='rev'?cpf:'',
+    cnpj: perfil==='loj'?cnpj:'',
+    ja_revende: jr,
+    como_vende: cv,
+    tipo_estabelecimento: te,
+    ja_vende_linha: jv,
+    tags: perfil==='rev'?'LP Revendedor':'LP Lojista',
+    source: 'lp_revendedor',
+    source_detail: perfil==='rev'?'Formulario Revendedor':'Formulario Lojista',
+    utm_source: val('utm_source'),
+    utm_medium: val('utm_medium'),
+    utm_campaign: val('utm_campaign'),
+    utm_content: val('utm_content'),
+    utm_term: val('utm_term'),
+    fbclid: val('fbclid'),
+    gclid: val('gclid'),
+    referrer: val('referrer'),
+    landing_page: val('landing_page'),
+    device: /Mobi|Android|iPhone/i.test(navigator.userAgent)?'mobile':'desktop',
+    screen: `${screen.width}x${screen.height}`,
+    viewport: `${innerWidth}x${innerHeight}`,
+    user_agent: navigator.userAgent,
+    fill_time_ms: Date.now() - PAGE_LOAD_TS,
+    fbp: document.cookie.match(/_fbp=([^;]+)/)?.[1] || '',
+    fbc: document.cookie.match(/_fbc=([^;]+)/)?.[1] || ''
+  };
+
+  // Dispara Pixel Lead ANTES do redirect (garante que o evento sobe mesmo se Apps Script demorar)
+  try {
+    if (window.fbq) fbq('track','Lead',{content_name: payload.perfil, value: 1500, currency:'BRL'});
+  } catch(e){}
+
+  // POST no-cors pro Apps Script (fire-and-forget — Apps Script devolve JSON opaque em no-cors, tudo bem)
+  try {
+    await fetch(APPS_SCRIPT_URL, {
+      method:'POST', mode:'no-cors',
+      headers:{'Content-Type':'text/plain;charset=utf-8'},
+      body: JSON.stringify(payload)
+    });
+  } catch(e){ console.warn('Apps Script POST falhou:', e); }
+
+  // Redireciona pra thank you page com msg pra WhatsApp
+  const params = new URLSearchParams({ msg, to: WHATSAPP, perfil: payload.perfil });
+  location.href = 'obrigado.html?' + params.toString();
 });
 
 /* SCROLL REVEAL */
