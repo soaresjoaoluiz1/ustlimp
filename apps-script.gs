@@ -34,6 +34,7 @@ const HEADERS = [
   'Referrer', 'Landing page',
   'Device', 'Screen', 'Viewport', 'User agent',
   'Fill time (ms)',
+  'Qualificado (R$1500)',
   'CRM sync status', 'CRM sync response'
 ];
 
@@ -55,46 +56,56 @@ function doPost(e) {
     }
 
     // 2. Chama webhook CRM (antes de escrever, pra saber o status)
+    // IMPORTANTE: se lead NAO qualificado (nao tem R$1500), NAO envia pro CRM
+    // -> ele fica so na planilha marcado como "NAO QUALIFICADO", campanhas Meta continuam otimizando so pra qualificados
+    const qualificado = body.qualificado === true || body.qualificado === 'true' || body.qualificado === 1 || body.qualificado === '1';
     let crmStatus = 'pending', crmResponse = '';
-    try {
-      const crmPayload = {
-        name: body.nome,
-        phone: body.whatsapp,
-        city: body.cidade,
-        cpf_cnpj: body.cpf_cnpj || body.cpf || body.cnpj || '',
-        cpf: body.cpf || '',
-        cnpj: body.cnpj || '',
-        source: body.source || 'lp_revendedor',
-        source_detail: body.source_detail || body.perfil || '',
-        tags: body.tags || (body.perfil === 'Lojista' ? 'LP Lojista' : 'LP Revendedor'),
-        utm_source: body.utm_source || '',
-        utm_medium: body.utm_medium || '',
-        utm_campaign: body.utm_campaign || '',
-        utm_content: body.utm_content || '',
-        utm_term: body.utm_term || '',
-        fbclid: body.fbclid || '',
-        gclid: body.gclid || '',
-        referrer: body.referrer || '',
-        landing_page: body.landing_page || '',
-        // Campos extras vao pra notas do lead se webhook aceitar
-        perfil: body.perfil,
-        ja_revende: body.ja_revende,
-        como_vende: body.como_vende,
-        tipo_estabelecimento: body.tipo_estabelecimento,
-        ja_vende_linha: body.ja_vende_linha
-      };
-      const resp = UrlFetchApp.fetch(CRM_WEBHOOK, {
-        method: 'post',
-        contentType: 'application/json',
-        payload: JSON.stringify(crmPayload),
-        muteHttpExceptions: true
-      });
-      const code = resp.getResponseCode();
-      crmStatus = code >= 200 && code < 300 ? 'ok' : 'erro_' + code;
-      crmResponse = resp.getContentText().substring(0, 500);
-    } catch (crmErr) {
-      crmStatus = 'exception';
-      crmResponse = String(crmErr).substring(0, 500);
+    if (!qualificado) {
+      crmStatus = 'NAO QUALIFICADO - nao enviado ao CRM';
+      crmResponse = 'Lead sem R$1500 pra investir (resposta: ' + (body.qualifica_resposta || 'nao') + '). Retido pra nurture.';
+    } else {
+      try {
+        const crmPayload = {
+          name: body.nome,
+          phone: body.whatsapp,
+          city: body.cidade,
+          cpf_cnpj: body.cpf_cnpj || body.cpf || body.cnpj || '',
+          cpf: body.cpf || '',
+          cnpj: body.cnpj || '',
+          source: body.source || 'lp_revendedor',
+          source_detail: body.source_detail || body.perfil || '',
+          tags: body.tags || (body.perfil === 'Lojista' ? 'LP Lojista' : 'LP Revendedor'),
+          utm_source: body.utm_source || '',
+          utm_medium: body.utm_medium || '',
+          utm_campaign: body.utm_campaign || '',
+          utm_content: body.utm_content || '',
+          utm_term: body.utm_term || '',
+          fbclid: body.fbclid || '',
+          gclid: body.gclid || '',
+          referrer: body.referrer || '',
+          landing_page: body.landing_page || '',
+          // Campos extras vao pra notas do lead se webhook aceitar
+          perfil: body.perfil,
+          ja_revende: body.ja_revende,
+          como_vende: body.como_vende,
+          tipo_estabelecimento: body.tipo_estabelecimento,
+          ja_vende_linha: body.ja_vende_linha,
+          qualificado: true,
+          investimento_1500: 'sim'
+        };
+        const resp = UrlFetchApp.fetch(CRM_WEBHOOK, {
+          method: 'post',
+          contentType: 'application/json',
+          payload: JSON.stringify(crmPayload),
+          muteHttpExceptions: true
+        });
+        const code = resp.getResponseCode();
+        crmStatus = code >= 200 && code < 300 ? 'ok' : 'erro_' + code;
+        crmResponse = resp.getContentText().substring(0, 500);
+      } catch (crmErr) {
+        crmStatus = 'exception';
+        crmResponse = String(crmErr).substring(0, 500);
+      }
     }
 
     // 3. Escreve linha final
@@ -129,6 +140,7 @@ function doPost(e) {
       body.viewport || '',
       body.user_agent || '',
       body.fill_time_ms || '',
+      qualificado ? 'SIM' : 'NAO',
       crmStatus,
       crmResponse
     ];
@@ -142,17 +154,34 @@ function doPost(e) {
   }
 }
 
-// Teste rapido no editor: menu Executar → doPost_test
-function doPost_test() {
+// Teste rapido no editor: menu Executar → doPost_test_qualificado / doPost_test_nao_qualificado
+function doPost_test_qualificado() {
   const fake = { postData: { contents: JSON.stringify({
     timestamp: new Date().toISOString(),
-    perfil: 'Revendedor', nome: 'TESTE João Silva', whatsapp: '5511999999999',
+    perfil: 'Revendedor', nome: 'TESTE João Silva QUALIFICADO', whatsapp: '5511999999999',
     cidade: 'São Paulo / SP', cpf: '12345678909', cpf_cnpj: '12345678909',
     ja_revende: 'Não, seria minha primeira vez', como_vende: 'Pra vizinhos e conhecidos',
+    qualificado: true, qualifica_resposta: 'sim', investimento_1500: 'sim',
     source: 'lp_revendedor', source_detail: 'Formulario Revendedor', tags: 'LP Revendedor',
     utm_source: 'facebook', utm_medium: 'cpc', utm_campaign: 'teste',
     device: 'desktop', screen: '1920x1080', viewport: '1440x900',
     user_agent: 'Test', fill_time_ms: 30000
+  }) } };
+  const res = doPost(fake);
+  Logger.log(res.getContent());
+}
+
+function doPost_test_nao_qualificado() {
+  const fake = { postData: { contents: JSON.stringify({
+    timestamp: new Date().toISOString(),
+    perfil: 'Revendedor', nome: 'TESTE Maria Souza SEM 1500', whatsapp: '5511988888888',
+    cidade: 'Rio de Janeiro / RJ', cpf: '98765432100', cpf_cnpj: '98765432100',
+    ja_revende: 'Não', como_vende: 'Pra vizinhos',
+    qualificado: false, qualifica_resposta: 'nao', investimento_1500: 'nao',
+    source: 'lp_revendedor', source_detail: 'Formulario Revendedor', tags: 'LP Revendedor · Nao qualificado',
+    utm_source: 'facebook', utm_medium: 'cpc', utm_campaign: 'teste',
+    device: 'mobile', screen: '390x844', viewport: '390x664',
+    user_agent: 'Test', fill_time_ms: 25000
   }) } };
   const res = doPost(fake);
   Logger.log(res.getContent());

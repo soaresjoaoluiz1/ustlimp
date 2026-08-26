@@ -420,6 +420,9 @@ fbq('track', 'PageView');
   .ph-photo img{transition:transform 8s ease}
   .ph-photo:hover img{transform:scale(1.05)}
   @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;scroll-behavior:auto!important;transition:none!important}}
+  .qual-opt:hover{background:rgba(255,255,255,0.06)!important;border-color:rgba(255,179,0,0.35)!important}
+  .qual-opt:has(input:checked){background:rgba(52,199,89,0.10)!important;border-color:rgba(52,199,89,0.45)!important}
+  .qual-opt:has(input[value="nao"]:checked){background:rgba(255,170,131,0.10)!important;border-color:rgba(255,170,131,0.45)!important}
 </style>
 </head>
 <body>
@@ -715,36 +718,56 @@ fbq('track', 'PageView');
   <div class="wrap">
     <div class="form-head">
       <span class="kick">Comece agora</span>
-      <h2>Escolha seu perfil e fale com a gente</h2>
-      <p>Você revende de casa ou tem uma loja? Marque abaixo. Seu contato chega no nosso WhatsApp já etiquetado, e a gente te atende do jeito certo.</p>
+      <h2>Solicite seu acesso à revenda USTULIMP</h2>
+      <p>Preencha em 30 segundos. A gente identifica automatico se voce vai comprar como pessoa fisica ou empresa — funciona pros dois.</p>
     </div>
     <div class="card">
       <div class="beam"></div>
       <div class="card-in">
-        <div class="toggle" role="tablist">
-          <button class="tg rev active" id="tgRev" role="tab" aria-selected="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg><span class="tt">Quero revender</span><span class="ts">Pessoa física · CPF</span></button>
-          <button class="tg loj" id="tgLoj" role="tab" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l1.5-5h15L21 9M4 9v11h16V9M4 9h16"/><path d="M9 20v-6h6v6"/></svg><span class="tt">Tenho uma loja</span><span class="ts">Empresa · CNPJ</span></button>
-        </div>
         <div class="fbody">
-          <div class="intro" id="introLine"><b>Revendedor:</b> você compra no seu CPF e revende pra quem quiser. Sem precisar de loja.</div>
-          <div class="field"><label for="nome">Seu nome completo</label><input type="text" id="nome" placeholder="Ex: Maria Silva" autocomplete="name"><div class="msg" id="mNome">Preenche seu nome.</div></div>
+          <div class="intro"><b>Compra direto de fabrica</b> com margem de 60% a 100% pra revender. Pedido inicial minimo R$ 1.500.</div>
+          <div class="field"><label for="nome">Nome completo</label><input type="text" id="nome" placeholder="Ex: Maria Silva" autocomplete="name"><div class="msg" id="mNome">Preenche seu nome.</div></div>
           <div class="two">
-            <div class="field"><label for="whats">WhatsApp (com DDD)</label><input type="tel" id="whats" placeholder="(14) 99999-9999" inputmode="numeric" autocomplete="tel"><div class="msg" id="mWhats">WhatsApp inválido.</div></div>
-            <div class="field"><label for="cidade">Cidade / UF</label><input type="text" id="cidade" placeholder="Ex: Jaú / SP" autocomplete="address-level2"><div class="msg" id="mCidade">Preenche sua cidade.</div></div>
+            <div class="field"><label for="whats">WhatsApp (com DDD)</label><input type="tel" id="whats" placeholder="(14) 99999-9999" inputmode="numeric" autocomplete="tel"><div class="msg" id="mWhats">WhatsApp invalido.</div></div>
+            <div class="field"><label for="cidade">Cidade / UF</label><input type="text" id="cidade" placeholder="Ex: Jau / SP" autocomplete="address-level2"><div class="msg" id="mCidade">Preenche sua cidade.</div></div>
           </div>
-          <div class="branch show" id="brRev">
-            <div class="field"><label for="cpf">CPF</label><input type="tel" id="cpf" placeholder="000.000.000-00" inputmode="numeric"><div class="msg" id="mCpf">CPF inválido.</div></div>
-            <div class="two">
-              <div class="field"><label for="jaRevende">Já revende algo hoje?</label><select id="jaRevende"><option value="">Selecione</option><option>Não, seria minha primeira vez</option><option>Sim, já revendo outros produtos</option></select></div>
-              <div class="field"><label for="comoVende">Como pretende vender?</label><select id="comoVende"><option value="">Selecione</option><option>Pra vizinhos e conhecidos</option><option>Nas redes sociais / online</option><option>Porta a porta</option><option>Ainda não sei, quero orientação</option></select></div>
-            </div>
+          <div class="field">
+            <label for="docId">CPF ou CNPJ <span id="docTipo" style="font-size:11px;color:#9B96B0;font-weight:400;margin-left:6px"></span></label>
+            <input type="tel" id="docId" placeholder="Digite CPF ou CNPJ (com ou sem pontuacao)" inputmode="numeric" maxlength="18">
+            <small style="font-size:11px;color:#6B6580;margin-top:4px;display:block">A gente detecta automatico pelo numero de digitos. CPF = 11 digitos, CNPJ = 14 digitos.</small>
+            <div class="msg" id="mDoc">CPF ou CNPJ invalido.</div>
           </div>
-          <div class="branch" id="brLoj">
-            <div class="field"><label for="cnpj">CNPJ</label><input type="tel" id="cnpj" placeholder="00.000.000/0000-00" inputmode="numeric"><div class="msg" id="mCnpj">CNPJ inválido.</div></div>
-            <div class="two">
-              <div class="field"><label for="tipoEstab">Tipo de estabelecimento</label><select id="tipoEstab"><option value="">Selecione</option><option>Mercado / mercearia de bairro</option><option>Loja de produtos de limpeza</option><option>Distribuidora / atacado</option><option>Outro comércio</option></select></div>
-              <div class="field"><label for="jaVendeLinha">Já vende linha de limpeza?</label><select id="jaVendeLinha"><option value="">Selecione</option><option>Sim, quero mais opções</option><option>Não, quero começar</option></select></div>
+          <div class="field" style="padding:14px 16px;background:rgba(255,179,0,0.06);border:1px solid rgba(255,179,0,0.25);border-radius:10px;margin-top:8px">
+            <label style="color:#FFB300;font-weight:700;margin-bottom:2px">Voce tem R$ 1.500 pra investir no primeiro pedido?</label>
+            <small style="font-size:12px;color:#A8A3B8;display:block;margin-bottom:12px">Esse eh o pedido minimo pra virar revendedor USTULIMP. Com esse valor voce ja monta um estoque que da pra comecar a girar.</small>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <label class="qual-opt" style="flex:1;min-width:140px;display:flex;align-items:center;gap:8px;padding:12px 14px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:8px;cursor:pointer;transition:all .15s">
+                <input type="radio" name="qualifica" value="sim" style="accent-color:#34C759">
+                <div>
+                  <div style="font-weight:700;font-size:13px;color:#F0EDF5">Sim, tenho</div>
+                  <div style="font-size:11px;color:#9B96B0;margin-top:1px">Quero comecar agora</div>
+                </div>
+              </label>
+              <label class="qual-opt" style="flex:1;min-width:140px;display:flex;align-items:center;gap:8px;padding:12px 14px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:8px;cursor:pointer;transition:all .15s">
+                <input type="radio" name="qualifica" value="nao" style="accent-color:#FFAA83">
+                <div>
+                  <div style="font-weight:700;font-size:13px;color:#F0EDF5">Nao tenho agora</div>
+                  <div style="font-size:11px;color:#9B96B0;margin-top:1px">Vou receber info pra depois</div>
+                </div>
+              </label>
             </div>
+            <div class="msg" id="mQual">Selecione uma opcao.</div>
+          </div>
+          <div class="field" style="margin-top:8px">
+            <label for="comoVende">Como pretende vender? (opcional)</label>
+            <select id="comoVende">
+              <option value="">Selecione</option>
+              <option>Pra vizinhos e conhecidos</option>
+              <option>Nas redes sociais / online</option>
+              <option>Porta a porta</option>
+              <option>Ja tenho loja / comercio</option>
+              <option>Ainda nao sei, quero orientacao</option>
+            </select>
           </div>
           <!-- hidden fields de tracking (preenchidos via JS) -->
           <input type="hidden" id="utm_source" name="utm_source">
@@ -877,10 +900,7 @@ faqEl.innerHTML=FAQ.map(f=>`<div class="qa"><button class="q">${f[0]}<svg viewBo
 faqEl.querySelectorAll('.qa').forEach(qa=>{qa.querySelector('.q').addEventListener('click',()=>{const open=qa.classList.contains('open');faqEl.querySelectorAll('.qa').forEach(x=>{x.classList.remove('open');x.querySelector('.a').style.maxHeight=null});if(!open){qa.classList.add('open');const a=qa.querySelector('.a');a.style.maxHeight=a.scrollHeight+'px'}});});
 
 /* TOGGLE */
-let perfil='rev';
-const tgRev=document.getElementById('tgRev'),tgLoj=document.getElementById('tgLoj'),brRev=document.getElementById('brRev'),brLoj=document.getElementById('brLoj'),introLine=document.getElementById('introLine');
-function setPerfil(p){perfil=p;const rev=p==='rev';tgRev.classList.toggle('active',rev);tgRev.setAttribute('aria-selected',rev);tgLoj.classList.toggle('active',!rev);tgLoj.setAttribute('aria-selected',!rev);brRev.classList.toggle('show',rev);brLoj.classList.toggle('show',!rev);introLine.innerHTML=rev?"<b>Revendedor:</b> você compra no seu CPF e revende pra quem quiser. Sem precisar de loja.":"<b>Lojista:</b> você compra no CNPJ pra abastecer sua loja com uma linha que gira e dá margem.";}
-tgRev.onclick=()=>setPerfil('rev');tgLoj.onclick=()=>setPerfil('loj');
+/* Toggle Revendedor/Lojista removido — form unificado com auto-detect CPF/CNPJ */
 document.querySelectorAll('[data-cta]').forEach(b=>{b.onclick=()=>document.getElementById('cadastro').scrollIntoView({behavior:'smooth'})});
 document.querySelectorAll('[data-scroll]').forEach(b=>{b.onclick=()=>{const t=document.querySelector(b.dataset.scroll);if(t)t.scrollIntoView({behavior:'smooth'})}});
 
@@ -889,52 +909,84 @@ const onlyD=s=>s.replace(/\D/g,'');
 function maskPhone(v){v=onlyD(v).slice(0,11);if(v.length>10)return v.replace(/(\d{2})(\d{5})(\d{4})/,'($1) $2-$3');if(v.length>6)return v.replace(/(\d{2})(\d{4})(\d{0,4})/,'($1) $2-$3');if(v.length>2)return v.replace(/(\d{2})(\d{0,5})/,'($1) $2');return v.replace(/(\d*)/,'($1');}
 function maskCPF(v){v=onlyD(v).slice(0,11);return v.replace(/(\d{3})(\d)/,'$1.$2').replace(/(\d{3})(\d)/,'$1.$2').replace(/(\d{3})(\d{1,2})$/,'$1-$2');}
 function maskCNPJ(v){v=onlyD(v).slice(0,14);return v.replace(/(\d{2})(\d)/,'$1.$2').replace(/(\d{3})(\d)/,'$1.$2').replace(/(\d{3})(\d)/,'$1/$2').replace(/(\d{4})(\d{1,2})$/,'$1-$2');}
-const bind=(id,fn)=>{const el=document.getElementById(id);el.addEventListener('input',()=>el.value=fn(el.value));};
-bind('whats',maskPhone);bind('cpf',maskCPF);bind('cnpj',maskCNPJ);
+const bind=(id,fn)=>{const el=document.getElementById(id);if(el)el.addEventListener('input',()=>el.value=fn(el.value));};
+bind('whats',maskPhone);
+// Auto-detect CPF vs CNPJ pelo tamanho de digitos (11 = CPF, 12-14 = CNPJ)
+function maskDoc(v){
+  const d=onlyD(v);
+  if(d.length<=11)return maskCPF(v);
+  return maskCNPJ(v);
+}
+function docTipo(v){
+  const d=onlyD(v);
+  if(d.length===0)return '';
+  if(d.length<=11)return '· CPF (pessoa fisica)';
+  return '· CNPJ (empresa)';
+}
+(function(){
+  const el=document.getElementById('docId');
+  const tipo=document.getElementById('docTipo');
+  if(!el)return;
+  el.addEventListener('input',()=>{
+    el.value=maskDoc(el.value);
+    if(tipo)tipo.textContent=docTipo(el.value);
+  });
+})();
 function validaCPF(cpf){cpf=onlyD(cpf);if(cpf.length!==11||/^(\d)\1{10}$/.test(cpf))return false;let s=0;for(let i=0;i<9;i++)s+=+cpf[i]*(10-i);let d=11-s%11;if(d>9)d=0;if(d!==+cpf[9])return false;s=0;for(let i=0;i<10;i++)s+=+cpf[i]*(11-i);d=11-s%11;if(d>9)d=0;return d===+cpf[10];}
 function validaCNPJ(c){c=onlyD(c);if(c.length!==14||/^(\d)\1{13}$/.test(c))return false;const calc=x=>{let n=0,p=x-7;for(let i=x;i>=1;i--){n+=c[x-i]*p--;if(p<2)p=9;}const r=n%11;return r<2?0:11-r;};return calc(12)===+c[12]&&calc(13)===+c[13];}
 const validPhone=v=>onlyD(v).length>=10&&onlyD(v).length<=11;
 function showErr(inputId,msgId,cond){const inp=document.getElementById(inputId),msg=document.getElementById(msgId);if(cond){inp.classList.add('err');msg.classList.add('show');return false;}inp.classList.remove('err');msg.classList.remove('show');return true;}
 
-/* SUBMIT → Apps Script (Sheets + CRM sync) → fbq('Lead') → obrigado.html */
+/* SUBMIT — form unificado com auto-detect CPF/CNPJ e qualificacao R$1500
+   Se qualificado (Sim) → grava planilha + envia CRM + fbq('Lead') → obrigado.html
+   Se NAO qualificado    → grava planilha (marca desqualificado) + NAO envia CRM
+                          + fbq('LeadDesqualificado') SEM Lead → obrigado-nao.html
+   Motivacao: otimizacao das campanhas Meta usa evento 'Lead' — nao queremos que
+   leads sem os R$1500 contaminem a otimizacao (senao Meta vai buscar mais desses). */
 document.getElementById('submitBtn').addEventListener('click',async ()=>{
   const btn=document.getElementById('submitBtn');
-  const nome=document.getElementById('nome').value.trim(),whats=document.getElementById('whats').value.trim(),cidade=document.getElementById('cidade').value.trim();
+  const val=id=>{const el=document.getElementById(id);return el?el.value.trim():''};
+  const nome=val('nome'),whats=val('whats'),cidade=val('cidade'),docRaw=val('docId'),cv=val('comoVende');
+  const docDigits=onlyD(docRaw);
+  const isCnpj=docDigits.length>11;
+  const qualEl=document.querySelector('input[name="qualifica"]:checked');
+  const qualifica=qualEl?qualEl.value:'';
+
   let ok=true;
-  ok=showErr('nome','mNome',nome.length<3)&&ok;ok=showErr('whats','mWhats',!validPhone(whats))&&ok;ok=showErr('cidade','mCidade',cidade.length<2)&&ok;
-  const val=id=>document.getElementById(id).value.trim();
-  let cpf='',cnpj='',jr='',cv='',te='',jv='',msg='';
-  if(perfil==='rev'){
-    cpf=val('cpf');jr=val('jaRevende');cv=val('comoVende');
-    ok=showErr('cpf','mCpf',!validaCPF(cpf))&&ok;
-    if(!ok)return;
-    msg=`Olá! Quero ser revendedor da USTULIMP.\n\n*Perfil:* Revendedor (CPF)\n*Nome:* ${nome}\n*CPF:* ${cpf}\n*WhatsApp:* ${whats}\n*Cidade:* ${cidade}\n*Já revende hoje:* ${jr||'não informado'}\n*Como pretende vender:* ${cv||'não informado'}`;
-  } else {
-    cnpj=val('cnpj');te=val('tipoEstab');jv=val('jaVendeLinha');
-    ok=showErr('cnpj','mCnpj',!validaCNPJ(cnpj))&&ok;
-    if(!ok)return;
-    msg=`Olá! Tenho uma loja e quero comprar da USTULIMP.\n\n*Perfil:* Lojista (CNPJ)\n*Nome:* ${nome}\n*CNPJ:* ${cnpj}\n*WhatsApp:* ${whats}\n*Cidade:* ${cidade}\n*Tipo de estabelecimento:* ${te||'não informado'}\n*Já vende linha de limpeza:* ${jv||'não informado'}`;
-  }
+  ok=showErr('nome','mNome',nome.length<3)&&ok;
+  ok=showErr('whats','mWhats',!validPhone(whats))&&ok;
+  ok=showErr('cidade','mCidade',cidade.length<2)&&ok;
+  const docValid=isCnpj?validaCNPJ(docRaw):validaCPF(docRaw);
+  ok=showErr('docId','mDoc',!docValid)&&ok;
+  // Validacao qualificacao (radio) — nao usa showErr pq nao tem input trigger
+  const mQual=document.getElementById('mQual');
+  if(!qualifica){mQual.classList.add('show');ok=false;}else{mQual.classList.remove('show');}
   if(!ok)return;
 
   btn.disabled=true;btn.style.opacity=.6;
   const originalHtml=btn.innerHTML;btn.innerHTML='Enviando...';
 
-  // Monta payload completo pra planilha + CRM
+  const qualificado=qualifica==='sim';
+  const perfilLabel=isCnpj?'Empresa (CNPJ)':'Pessoa fisica (CPF)';
+
+  const msg=qualificado
+    ? `Ola! Quero ser revendedor da USTULIMP.\n\n*Nome:* ${nome}\n*${isCnpj?'CNPJ':'CPF'}:* ${docRaw}\n*WhatsApp:* ${whats}\n*Cidade:* ${cidade}\n*Investimento inicial:* R$ 1.500 disponivel\n*Como pretende vender:* ${cv||'nao informado'}`
+    : `Ola! Tenho interesse em revender USTULIMP mas ainda nao tenho os R$ 1.500 pro pedido inicial. Gostaria de receber mais informacoes.\n\n*Nome:* ${nome}\n*${isCnpj?'CNPJ':'CPF'}:* ${docRaw}\n*WhatsApp:* ${whats}\n*Cidade:* ${cidade}`;
+
   const payload = {
     timestamp: new Date().toISOString(),
-    perfil: perfil==='rev'?'Revendedor':'Lojista',
+    perfil: perfilLabel,
     nome, whatsapp: whats, cidade,
-    cpf_cnpj: perfil==='rev'?cpf:cnpj,
-    cpf: perfil==='rev'?cpf:'',
-    cnpj: perfil==='loj'?cnpj:'',
-    ja_revende: jr,
+    cpf_cnpj: docRaw,
+    cpf: isCnpj?'':docRaw,
+    cnpj: isCnpj?docRaw:'',
     como_vende: cv,
-    tipo_estabelecimento: te,
-    ja_vende_linha: jv,
-    tags: perfil==='rev'?'LP Revendedor':'LP Lojista',
+    qualificado,                          // boolean pro Apps Script decidir se manda pro CRM
+    qualifica_resposta: qualifica,        // 'sim'|'nao' (auditoria)
+    investimento_1500: qualifica,         // sinonimo pra clareza na planilha
+    tags: qualificado?(isCnpj?'LP Lojista Qualificado':'LP Revendedor Qualificado'):(isCnpj?'LP Lojista NAO Qualificado':'LP Revendedor NAO Qualificado'),
     source: 'lp_revendedor',
-    source_detail: perfil==='rev'?'Formulario Revendedor':'Formulario Lojista',
+    source_detail: qualificado?'Qualificado R$1500':'Nao qualificado (sem R$1500)',
     utm_source: val('utm_source'),
     utm_medium: val('utm_medium'),
     utm_campaign: val('utm_campaign'),
@@ -953,12 +1005,19 @@ document.getElementById('submitBtn').addEventListener('click',async ()=>{
     fbc: document.cookie.match(/_fbc=([^;]+)/)?.[1] || ''
   };
 
-  // Dispara Pixel Lead ANTES do redirect (garante que o evento sobe mesmo se Apps Script demorar)
+  // Pixel: SO dispara 'Lead' se qualificado. Se nao, dispara evento custom
+  // 'LeadDesqualificado' pra ter registro (mas nao contamina otimizacao de conversao)
   try {
-    if (window.fbq) fbq('track','Lead',{content_name: payload.perfil, value: 1500, currency:'BRL'});
+    if (window.fbq) {
+      if (qualificado) {
+        fbq('track','Lead',{content_name: 'LP Revendedor Qualificado', value: 1500, currency:'BRL'});
+      } else {
+        fbq('trackCustom','LeadDesqualificado',{content_name: 'LP Revendedor sem R$1500', motivo: 'sem_investimento_1500'});
+      }
+    }
   } catch(e){}
 
-  // POST no-cors pro Apps Script (fire-and-forget — Apps Script devolve JSON opaque em no-cors, tudo bem)
+  // POST no-cors pro Apps Script (fire-and-forget)
   try {
     await fetch(APPS_SCRIPT_URL, {
       method:'POST', mode:'no-cors',
@@ -967,9 +1026,10 @@ document.getElementById('submitBtn').addEventListener('click',async ()=>{
     });
   } catch(e){ console.warn('Apps Script POST falhou:', e); }
 
-  // Redireciona pra thank you page com msg pra WhatsApp
-  const params = new URLSearchParams({ msg, to: WHATSAPP, perfil: payload.perfil });
-  location.href = 'obrigado.html?' + params.toString();
+  // Redirect: qualificado vai pra obrigado.html (com Lead + WhatsApp CTA),
+  // nao qualificado vai pra obrigado-nao.html (com LeadDesqualificado + mensagem diferente)
+  const params = new URLSearchParams({ msg, to: WHATSAPP, perfil: perfilLabel });
+  location.href = (qualificado?'obrigado.html':'obrigado-nao.html') + '?' + params.toString();
 });
 
 /* SCROLL REVEAL */
