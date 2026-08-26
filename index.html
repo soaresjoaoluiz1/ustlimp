@@ -420,9 +420,12 @@ fbq('track', 'PageView');
   .ph-photo img{transition:transform 8s ease}
   .ph-photo:hover img{transform:scale(1.05)}
   @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;scroll-behavior:auto!important;transition:none!important}}
-  .qual-opt:hover{background:rgba(255,255,255,0.06)!important;border-color:rgba(255,179,0,0.35)!important}
-  .qual-opt:has(input:checked){background:rgba(52,199,89,0.10)!important;border-color:rgba(52,199,89,0.45)!important}
-  .qual-opt:has(input[value="nao"]:checked){background:rgba(255,170,131,0.10)!important;border-color:rgba(255,170,131,0.45)!important}
+  .qual-row{display:flex;gap:8px;margin-top:6px}
+  .qual-opt{flex:1;display:flex;align-items:center;justify-content:center;gap:8px;padding:10px 12px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.10);border-radius:8px;cursor:pointer;transition:all .15s;font-size:13px;font-weight:600;color:#E8E4F0;min-height:42px}
+  .qual-opt input{margin:0;accent-color:#FFB300}
+  .qual-opt:hover{background:rgba(255,255,255,0.06);border-color:rgba(255,179,0,0.35)}
+  .qual-opt:has(input:checked){background:rgba(52,199,89,0.12);border-color:rgba(52,199,89,0.55);color:#B6F0C0}
+  .qual-opt:has(input[value="nao"]:checked){background:rgba(255,170,131,0.10);border-color:rgba(255,170,131,0.50);color:#FFD3B8}
 </style>
 </head>
 <body>
@@ -737,25 +740,13 @@ fbq('track', 'PageView');
             <small style="font-size:11px;color:#6B6580;margin-top:4px;display:block">A gente detecta automatico pelo numero de digitos. CPF = 11 digitos, CNPJ = 14 digitos.</small>
             <div class="msg" id="mDoc">CPF ou CNPJ invalido.</div>
           </div>
-          <div class="field" style="padding:14px 16px;background:rgba(255,179,0,0.06);border:1px solid rgba(255,179,0,0.25);border-radius:10px;margin-top:8px">
-            <label style="color:#FFB300;font-weight:700;margin-bottom:2px">Voce tem R$ 1.500 pra investir no primeiro pedido?</label>
-            <small style="font-size:12px;color:#A8A3B8;display:block;margin-bottom:12px">Esse eh o pedido minimo pra virar revendedor USTULIMP. Com esse valor voce ja monta um estoque que da pra comecar a girar.</small>
-            <div style="display:flex;gap:8px;flex-wrap:wrap">
-              <label class="qual-opt" style="flex:1;min-width:140px;display:flex;align-items:center;gap:8px;padding:12px 14px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:8px;cursor:pointer;transition:all .15s">
-                <input type="radio" name="qualifica" value="sim" style="accent-color:#34C759">
-                <div>
-                  <div style="font-weight:700;font-size:13px;color:#F0EDF5">Sim, tenho</div>
-                  <div style="font-size:11px;color:#9B96B0;margin-top:1px">Quero comecar agora</div>
-                </div>
-              </label>
-              <label class="qual-opt" style="flex:1;min-width:140px;display:flex;align-items:center;gap:8px;padding:12px 14px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:8px;cursor:pointer;transition:all .15s">
-                <input type="radio" name="qualifica" value="nao" style="accent-color:#FFAA83">
-                <div>
-                  <div style="font-weight:700;font-size:13px;color:#F0EDF5">Nao tenho agora</div>
-                  <div style="font-size:11px;color:#9B96B0;margin-top:1px">Vou receber info pra depois</div>
-                </div>
-              </label>
+          <div class="field" style="margin-top:8px">
+            <label style="display:flex;align-items:center;gap:6px;font-size:13px"><span style="color:#FFB300">*</span> Voce tem R$ 1.500 pra investir?</label>
+            <div class="qual-row">
+              <label class="qual-opt"><input type="radio" name="qualifica" value="sim"><span>Sim, tenho</span></label>
+              <label class="qual-opt"><input type="radio" name="qualifica" value="nao"><span>Ainda nao</span></label>
             </div>
+            <small style="font-size:11px;color:#6B6580;margin-top:6px;display:block">Pedido minimo pra virar revendedor USTULIMP.</small>
             <div class="msg" id="mQual">Selecione uma opcao.</div>
           </div>
           <div class="field" style="margin-top:8px">
