@@ -420,12 +420,14 @@ fbq('track', 'PageView');
   .ph-photo img{transition:transform 8s ease}
   .ph-photo:hover img{transform:scale(1.05)}
   @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;scroll-behavior:auto!important;transition:none!important}}
-  .qual-row{display:flex;gap:8px;margin-top:6px}
-  .qual-opt{flex:1;display:flex;align-items:center;justify-content:center;gap:8px;padding:10px 12px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.10);border-radius:8px;cursor:pointer;transition:all .15s;font-size:13px;font-weight:600;color:#E8E4F0;min-height:42px}
-  .qual-opt input{margin:0;accent-color:#FFB300}
-  .qual-opt:hover{background:rgba(255,255,255,0.06);border-color:rgba(255,179,0,0.35)}
-  .qual-opt:has(input:checked){background:rgba(52,199,89,0.12);border-color:rgba(52,199,89,0.55);color:#B6F0C0}
-  .qual-opt:has(input[value="nao"]:checked){background:rgba(255,170,131,0.10);border-color:rgba(255,170,131,0.50);color:#FFD3B8}
+  .qual-row{display:flex;gap:10px;margin-top:8px}
+  .qual-btn{flex:1;display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:14px 16px;background:#F5F1FA;border:2px solid #E5DFF0;border-radius:10px;cursor:pointer;transition:all .15s;font-family:'Outfit',sans-serif;font-weight:700;font-size:.95rem;color:#4A4560;min-height:52px;text-align:center;font-family:'Outfit'}
+  .qual-btn:hover{background:#FFF5D9;border-color:#FFB300;color:var(--navy)}
+  .qual-btn .ico-svg{color:#B0AAC2;flex-shrink:0;transition:color .15s}
+  .qual-btn.sel-yes{background:#E6F7E9;border-color:#34C759;color:#1F7A31}
+  .qual-btn.sel-yes .ico-svg{color:#34C759}
+  .qual-btn.sel-no{background:#FFF0E4;border-color:#FF8A4A;color:#B34A0F}
+  .qual-btn.sel-no .ico-svg{color:#FF8A4A}
 </style>
 </head>
 <body>
@@ -741,12 +743,13 @@ fbq('track', 'PageView');
             <div class="msg" id="mDoc">CPF ou CNPJ invalido.</div>
           </div>
           <div class="field" style="margin-top:8px">
-            <label style="display:flex;align-items:center;gap:6px;font-size:13px"><span style="color:#FFB300">*</span> Voce tem R$ 1.500 pra investir?</label>
+            <label>Voce tem R$ 1.500 pra investir? *</label>
             <div class="qual-row">
-              <label class="qual-opt"><input type="radio" name="qualifica" value="sim"><span>Sim, tenho</span></label>
-              <label class="qual-opt"><input type="radio" name="qualifica" value="nao"><span>Ainda nao</span></label>
+              <button type="button" class="qual-btn" data-qual="sim" id="qualSim"><svg class="ico-svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Sim, tenho</button>
+              <button type="button" class="qual-btn" data-qual="nao" id="qualNao"><svg class="ico-svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>Ainda nao</button>
             </div>
-            <small style="font-size:11px;color:#6B6580;margin-top:6px;display:block">Pedido minimo pra virar revendedor USTULIMP.</small>
+            <input type="hidden" id="qualifica" name="qualifica" value="">
+            <small style="font-size:11px;color:#8A85A0;margin-top:6px;display:block">Pedido minimo pra virar revendedor USTULIMP.</small>
             <div class="msg" id="mQual">Selecione uma opcao.</div>
           </div>
           <div class="field" style="margin-top:8px">
@@ -940,8 +943,7 @@ document.getElementById('submitBtn').addEventListener('click',async ()=>{
   const nome=val('nome'),whats=val('whats'),cidade=val('cidade'),docRaw=val('docId'),cv=val('comoVende');
   const docDigits=onlyD(docRaw);
   const isCnpj=docDigits.length>11;
-  const qualEl=document.querySelector('input[name="qualifica"]:checked');
-  const qualifica=qualEl?qualEl.value:'';
+  const qualifica=(document.getElementById('qualifica')||{}).value||'';
 
   let ok=true;
   ok=showErr('nome','mNome',nome.length<3)&&ok;
@@ -1021,6 +1023,17 @@ document.getElementById('submitBtn').addEventListener('click',async ()=>{
   // nao qualificado vai pra obrigado-nao.html (com LeadDesqualificado + mensagem diferente)
   const params = new URLSearchParams({ msg, to: WHATSAPP, perfil: perfilLabel });
   location.href = (qualificado?'obrigado.html':'obrigado-nao.html') + '?' + params.toString();
+});
+
+/* TOGGLE qualificacao R$1500 — clique nos botoes seta hidden input + visual */
+document.querySelectorAll('.qual-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    const v=btn.dataset.qual;
+    document.getElementById('qualifica').value=v;
+    document.querySelectorAll('.qual-btn').forEach(b=>{b.classList.remove('sel-yes','sel-no')});
+    btn.classList.add(v==='sim'?'sel-yes':'sel-no');
+    document.getElementById('mQual').classList.remove('show');
+  });
 });
 
 /* SCROLL REVEAL */
