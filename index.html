@@ -882,12 +882,12 @@ document.getElementById('prodGrid').innerHTML=PRODUTOS.map(p=>`<div class="pcard
 const FAQ=[
   ["Preciso ter CNPJ pra comprar?","Não. Quer revender como pessoa física, compra com <b>CPF</b>. Tem loja ou empresa, compra no <b>CNPJ</b>. Os dois caminhos existem. É só escolher o seu no formulário."],
   ["Qual é o pedido mínimo?","<b>R$ 1.500 no primeiro pedido.</b> Com esse valor você monta um estoque inicial que já dá pra começar a girar. Depois, você repõe no ritmo que a sua venda pedir."],
-  ["É produto de qualidade? Meu cliente vai gostar?","Sim. Fabricação própria e fórmulas regularizadas na ANVISA. É justamente a qualidade que faz o cliente recomprar todo mês. <span class='flag'>[[ confirmar nº ANVISA ]]</span>"],
+  ["É produto de qualidade? Meu cliente vai gostar?","Sim. Fabricação própria e fórmulas regularizadas na ANVISA. É justamente a qualidade que faz o cliente recomprar todo mês."],
   ["Isso é pirâmide?","Não. Você compra produto de verdade, de uma fábrica de verdade, e revende com margem. Sem mensalidade e sem precisar recrutar ninguém pra ganhar."],
-  ["Como funciona a margem de revenda?","Você compra no preço de fábrica e revende no preço de mercado. Dependendo do produto, dá de <b>60% a 100% de lucro</b> em cima do que pagou. <span class='flag'>[[ confirmar faixa por produto ]]</span>"],
+  ["Como funciona a margem de revenda?","Você compra no preço de fábrica e revende no preço de mercado. Dependendo do produto, dá de <b>60% a 100% de lucro</b> em cima do que pagou."],
   ["Preciso ter loja física?","Não. Muita gente começa vendendo pra vizinhos, parentes e no grupo do bairro. A loja é opcional. Dá pra crescer bem sem ela."],
-  ["Vocês entregam na minha região?","Hoje atendemos <span class='flag'>[[ regiões / frete ]]</span>. Me chama no WhatsApp com sua cidade que a gente confirma na hora se dá pra entregar ou combinar a retirada."],
-  ["Como recebo e faço o pagamento?","<span class='flag'>[[ formas de pagamento e prazo ]]</span> Depois do cadastro, a gente te explica tudo direitinho pelo WhatsApp."]
+  ["Vocês entregam na minha região?","Hoje atendemos a região central de SP, num raio de até aproximadamente 80 km da fábrica: <b>Barra Bonita, Igaraçu do Tietê, Mineiros do Tietê, Macatuba, Jaú, Dois Córregos, São Manuel, Lençóis Paulista, Areiópolis, Itapuí, Pederneiras, Pratânia, Bocaina, Santa Maria da Serra, Torrinha, Boracéia, Borebi, Botucatu, Agudos, Brotas, Bariri, Dourado, Bauru, Arealva, Itaju, Boa Esperança do Sul, São Pedro, Charqueada</b> e <b>Araraquara</b> (dependendo do endereço, fica próxima do limite). Sua cidade não está na lista? Me chama no WhatsApp que a gente confirma se dá pra entregar ou combinar a retirada."],
+  ["Como recebo e faço o pagamento?","Aceitamos <b>PIX, boleto ou cartão</b>. Nos primeiros pedidos o pagamento é à vista e, conforme o relacionamento vai crescendo, dá pra combinar prazos mais longos. Depois do cadastro, a gente te explica tudo direitinho pelo WhatsApp."]
 ];
 const faqEl=document.getElementById('faqList');
 faqEl.innerHTML=FAQ.map(f=>`<div class="qa"><button class="q">${f[0]}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button><div class="a"><div class="a-in">${f[1]}</div></div></div>`).join('');
