@@ -240,14 +240,17 @@ function backfillNaoQualificados() {
     const row = data[i];
     const rowIndex = i + 2; // linha real na planilha (com header)
     const syncStatus = String(row[colSyncStatus - 1] || '');
+    const syncResp = colSyncResp ? String(row[colSyncResp - 1] || '') : '';
+    // Em algumas linhas antigas, o texto "NAO QUALIFICADO..." caiu na coluna
+    // sync response (desalinhamento antigo). Concatena ambas pra procurar.
+    const statusAll = (syncStatus + ' | ' + syncResp).toUpperCase();
 
-    // So processa linhas com "NAO QUALIFICADO..." no sync status
-    // (essas nao foram pro CRM na epoca)
-    const isNaoQualif = syncStatus.indexOf('NAO QUALIFICADO') >= 0 ||
-                       syncStatus.indexOf('NÃO QUALIFICADO') >= 0;
+    // So processa linhas com "NAO QUALIFICADO..." em qualquer uma das duas colunas
+    const isNaoQualif = statusAll.indexOf('NAO QUALIFICADO') >= 0 ||
+                       statusAll.indexOf('NÃO QUALIFICADO') >= 0;
     if (!isNaoQualif) { ignorados++; continue; }
-    // Se ja foi backfilled/enviado antes, pula
-    if (syncStatus.indexOf('ok') === 0 || syncStatus.indexOf('backfill') >= 0) { jaEnviados++; continue; }
+    // Se ja foi backfilled antes, pula
+    if (statusAll.indexOf('BACKFILL') >= 0 || syncStatus.indexOf('ok_menos1500') === 0) { jaEnviados++; continue; }
 
     // Monta payload a partir da linha
     const perfil = row[col['Perfil'] - 1] || '';
