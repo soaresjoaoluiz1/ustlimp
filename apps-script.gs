@@ -23,6 +23,9 @@ const SHEET_NAME = 'LP REVENDEDOR';
 const CRM_WEBHOOK = 'https://drosagencia.com.br/crm/api/webhooks/sheets/ustulimp-comercio-de-produtos-de-limpeza-ltda';
 
 // Colunas em ordem — se mudar, mudar o headers[] tambem
+// Nota: schema original da planilha nao tem coluna "Qualificado (R$1500)".
+// A distincao qualif/nao qualif fica no CRM sync status ("ok" vs "ok_menos1500"
+// vs "ok_menos1500_backfill"), preservando compat com planilhas ja em uso.
 const HEADERS = [
   'Timestamp', 'Perfil', 'Nome', 'WhatsApp', 'Cidade/UF',
   'CPF', 'CNPJ',
@@ -34,7 +37,6 @@ const HEADERS = [
   'Referrer', 'Landing page',
   'Device', 'Screen', 'Viewport', 'User agent',
   'Fill time (ms)',
-  'Qualificado (R$1500)',
   'CRM sync status', 'CRM sync response'
 ];
 
@@ -138,7 +140,6 @@ function doPost(e) {
       body.viewport || '',
       body.user_agent || '',
       body.fill_time_ms || '',
-      qualificado ? 'SIM' : 'NAO',
       crmStatus,
       crmResponse
     ];
@@ -227,13 +228,8 @@ function backfillNaoQualificados() {
 
   const colSyncStatus = findCol(['CRM sync status', 'CRM sync', 'sync status']);
   const colSyncResp = findCol(['CRM sync response', 'CRM response', 'sync response']);
-  const colQualif = findCol([
-    'Qualificado (R$1500)', 'Qualificado (R$ 1500)', 'Qualificado (R$1.500)',
-    'Qualificado R$1500', 'Qualificado', 'Qualificado 1500'
-  ]);
-  if (!colSyncStatus || !colQualif) {
-    Logger.log('Colunas nao encontradas. Headers vistos: ' + JSON.stringify(headers) +
-               ' | colSyncStatus=' + colSyncStatus + ' colQualif=' + colQualif);
+  if (!colSyncStatus) {
+    Logger.log('Coluna "CRM sync status" nao encontrada. Headers: ' + JSON.stringify(headers));
     return;
   }
 
@@ -243,11 +239,14 @@ function backfillNaoQualificados() {
   for (let i = 0; i < data.length; i++) {
     const row = data[i];
     const rowIndex = i + 2; // linha real na planilha (com header)
-    const qualifText = String(row[colQualif - 1] || '').toUpperCase();
     const syncStatus = String(row[colSyncStatus - 1] || '');
 
-    // So processa: nao qualificado + ainda nao enviado ao CRM
-    if (qualifText !== 'NAO' && qualifText !== 'NÃO') { ignorados++; continue; }
+    // So processa linhas com "NAO QUALIFICADO..." no sync status
+    // (essas nao foram pro CRM na epoca)
+    const isNaoQualif = syncStatus.indexOf('NAO QUALIFICADO') >= 0 ||
+                       syncStatus.indexOf('NÃO QUALIFICADO') >= 0;
+    if (!isNaoQualif) { ignorados++; continue; }
+    // Se ja foi backfilled/enviado antes, pula
     if (syncStatus.indexOf('ok') === 0 || syncStatus.indexOf('backfill') >= 0) { jaEnviados++; continue; }
 
     // Monta payload a partir da linha
