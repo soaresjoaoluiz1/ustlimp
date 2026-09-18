@@ -200,16 +200,40 @@ function backfillNaoQualificados() {
   const lastRow = sheet.getLastRow();
   if (lastRow < 2) { Logger.log('Sem dados'); return; }
 
-  // Mapa de headers → indice de coluna (base 1)
-  const headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
-  const col = {};
-  headers.forEach((h, i) => col[String(h).trim()] = i + 1);
+  // Mapa de headers → indice de coluna (base 1). Match tolerante: normaliza
+  // removendo acentos, espacos, pontuacao e caixa. Assim "Qualificado (R$1500)",
+  // "Qualificado R$ 1.500", "QualificadoR$1500" etc todos batem.
+  const norm = (s) => String(s || '')
+    .normalize('NFD').replace(/[̀-ͯ]/g, '')
+    .replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
 
-  const colSyncStatus = col['CRM sync status'];
-  const colSyncResp = col['CRM sync response'];
-  const colQualif = col['Qualificado (R$1500)'];
+  const headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
+  const col = {};       // mapa exato (retrocompat)
+  const colNorm = {};   // mapa normalizado
+  headers.forEach((h, i) => {
+    const trimmed = String(h).trim();
+    col[trimmed] = i + 1;
+    colNorm[norm(trimmed)] = i + 1;
+  });
+  // Helper: acha coluna aceitando lista de nomes alternativos
+  const findCol = (candidates) => {
+    for (const c of candidates) {
+      if (col[c]) return col[c];
+      const n = norm(c);
+      if (colNorm[n]) return colNorm[n];
+    }
+    return null;
+  };
+
+  const colSyncStatus = findCol(['CRM sync status', 'CRM sync', 'sync status']);
+  const colSyncResp = findCol(['CRM sync response', 'CRM response', 'sync response']);
+  const colQualif = findCol([
+    'Qualificado (R$1500)', 'Qualificado (R$ 1500)', 'Qualificado (R$1.500)',
+    'Qualificado R$1500', 'Qualificado', 'Qualificado 1500'
+  ]);
   if (!colSyncStatus || !colQualif) {
-    Logger.log('Colunas nao encontradas — verifica headers');
+    Logger.log('Colunas nao encontradas. Headers vistos: ' + JSON.stringify(headers) +
+               ' | colSyncStatus=' + colSyncStatus + ' colQualif=' + colQualif);
     return;
   }
 
