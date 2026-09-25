@@ -733,7 +733,7 @@ fbq('track', 'PageView');
           <div class="intro"><b>Compra direto de fabrica</b> com margem de 60% a 100% pra revender. Pedido inicial minimo R$ 1.500.</div>
           <div class="field"><label for="nome">Nome completo</label><input type="text" id="nome" placeholder="Ex: Maria Silva" autocomplete="name"><div class="msg" id="mNome">Preenche seu nome.</div></div>
           <div class="two">
-            <div class="field"><label for="whats">WhatsApp (com DDD)</label><input type="tel" id="whats" placeholder="(14) 99999-9999" inputmode="numeric" autocomplete="tel"><div class="msg" id="mWhats">WhatsApp invalido.</div></div>
+            <div class="field"><label for="whats">WhatsApp (com DDD)</label><input type="tel" id="whats" placeholder="(14) 99999-9999" inputmode="numeric" autocomplete="tel" maxlength="15"><div class="msg" id="mWhats">Digite o numero completo com DDD + 9 na frente (ex: 14 99999-9999).</div></div>
             <div class="field"><label for="cidade">Cidade / UF</label><input type="text" id="cidade" placeholder="Ex: Jau / SP" autocomplete="address-level2"><div class="msg" id="mCidade">Preenche sua cidade.</div></div>
           </div>
           <div class="field">
@@ -928,7 +928,10 @@ function docTipo(v){
 })();
 function validaCPF(cpf){cpf=onlyD(cpf);if(cpf.length!==11||/^(\d)\1{10}$/.test(cpf))return false;let s=0;for(let i=0;i<9;i++)s+=+cpf[i]*(10-i);let d=11-s%11;if(d>9)d=0;if(d!==+cpf[9])return false;s=0;for(let i=0;i<10;i++)s+=+cpf[i]*(11-i);d=11-s%11;if(d>9)d=0;return d===+cpf[10];}
 function validaCNPJ(c){c=onlyD(c);if(c.length!==14||/^(\d)\1{13}$/.test(c))return false;const calc=x=>{let n=0,p=x-7;for(let i=x;i>=1;i--){n+=c[x-i]*p--;if(p<2)p=9;}const r=n%11;return r<2?0:11-r;};return calc(12)===+c[12]&&calc(13)===+c[13];}
-const validPhone=v=>onlyD(v).length>=10&&onlyD(v).length<=11;
+/* Validacao WhatsApp BR estrita — evita leads com numero errado.
+   Regra: 11 digitos totais (DDD 2 + 9 + numero 8), DDD real e 3o digito obrigatoriamente 9. */
+const VALID_DDDS=new Set(['11','12','13','14','15','16','17','18','19','21','22','24','27','28','31','32','33','34','35','37','38','41','42','43','44','45','46','47','48','49','51','53','54','55','61','62','63','64','65','66','67','68','69','71','73','74','75','77','79','81','82','83','84','85','86','87','88','89','91','92','93','94','95','96','97','98','99']);
+const validPhone=v=>{const d=onlyD(v);if(d.length!==11)return false;if(!VALID_DDDS.has(d.slice(0,2)))return false;if(d[2]!=='9')return false;if(/^(\d)\1{10}$/.test(d))return false;return true;};
 function showErr(inputId,msgId,cond){const inp=document.getElementById(inputId),msg=document.getElementById(msgId);if(cond){inp.classList.add('err');msg.classList.add('show');return false;}inp.classList.remove('err');msg.classList.remove('show');return true;}
 
 /* SUBMIT — form unificado com auto-detect CPF/CNPJ e qualificacao R$1500
