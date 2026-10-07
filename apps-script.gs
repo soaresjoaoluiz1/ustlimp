@@ -1,36 +1,30 @@
 /**
- * USTULIMP · LP Revendedor — captura de leads
- * Recebe POST JSON do formulário do site, escreve linha na aba "LP REVENDEDOR"
- * e repassa pro webhook do CRM Dros (conta Ustulimp).
+ * USTULIMP · LP Revendedor — captura de leads (schema 2026-10 com filtro de situacao)
  *
- * Passos pra instalar (uma vez só):
- * 1. Abrir a planilha: https://docs.google.com/spreadsheets/d/1A26fTciavtuj57TTC-uCxfnMZaBwZzU30jDe4CE6zbc/edit
- * 2. Extensões → Apps Script
- * 3. Apagar o Code.gs em branco, colar TODO este arquivo, salvar (Ctrl+S)
- * 4. Clicar em "Implantar" → "Nova implantação"
- * 5. Tipo: "App da Web"
- *    - Executar como: Eu (agenciadouc@gmail.com)
- *    - Quem tem acesso: Qualquer pessoa
- * 6. Autorizar (aparece popup pedindo permissão pra planilha + fetch)
- * 7. Copiar a URL "/exec" gerada
- * 8. Colar essa URL no index.html da LP (constante APPS_SCRIPT_URL) e fazer git pull
+ * SCHEMA NOVO (depois da reuniao 07/10/2026):
+ *   - Removido CPF/CNPJ, "Como pretende vender", "Tipo estabelecimento", "Ja vende linha"
+ *   - Adicionado "Situacao" (loja / distribuidora / porta a porta / quer iniciar)
+ *   - Qualificacao: ja atua (!= iniciar) E tem R$ 1.500
+ *   - Nao qualificado NAO vai pro CRM (so planilha) — evita contaminar otimizacao Meta
  *
- * Ao editar este arquivo depois: precisa "Gerenciar implantações" → editar a existente
- * → "Nova versão" → salvar. Se criar deployment NOVO, muda a URL e quebra o form.
+ * ABA DE DESTINO: 'LP REVENDEDOR 2026' (nova — nao mexe na aba antiga pra preservar histórico/backfill)
+ *
+ * Instalacao (uma vez so):
+ * 1. Abrir https://docs.google.com/spreadsheets/d/1A26fTciavtuj57TTC-uCxfnMZaBwZzU30jDe4CE6zbc/edit
+ * 2. Extensoes > Apps Script
+ * 3. Apagar tudo, colar este arquivo, salvar
+ * 4. Implantar > Gerenciar implantacoes > Editar a atual > Nova versao > Implantar
+ *    (NAO criar deployment novo — a URL ja esta no index.html)
  */
 
-const SHEET_NAME = 'LP REVENDEDOR';
+const SHEET_NAME = 'LP REVENDEDOR 2026';
+const SHEET_NAME_LEGACY = 'LP REVENDEDOR'; // usado so pelo backfill de nao-qualificados antigos
 const CRM_WEBHOOK = 'https://drosagencia.com.br/crm/api/webhooks/sheets/ustulimp-comercio-de-produtos-de-limpeza-ltda';
 
-// Colunas em ordem — se mudar, mudar o headers[] tambem
-// Nota: schema original da planilha nao tem coluna "Qualificado (R$1500)".
-// A distincao qualif/nao qualif fica no CRM sync status ("ok" vs "ok_menos1500"
-// vs "ok_menos1500_backfill"), preservando compat com planilhas ja em uso.
+// Ordem das colunas na aba nova — se mudar, mudar HEADERS tambem (writer e name-based nao, usa posicao)
 const HEADERS = [
   'Timestamp', 'Perfil', 'Nome', 'WhatsApp', 'Cidade/UF',
-  'CPF', 'CNPJ',
-  'Já revende hoje', 'Como pretende vender',
-  'Tipo estabelecimento', 'Já vende linha de limpeza',
+  'Situacao', 'Qualificado',
   'Source', 'Source detail', 'Tags',
   'UTM source', 'UTM medium', 'UTM campaign', 'UTM content', 'UTM term',
   'fbclid', 'gclid', 'fbp', 'fbc',
@@ -44,86 +38,84 @@ function doPost(e) {
   try {
     const body = JSON.parse(e.postData.contents);
 
-    // 1. Escreve na planilha
+    // 1. Garante aba + headers
     const ss = SpreadsheetApp.getActiveSpreadsheet();
     let sheet = ss.getSheetByName(SHEET_NAME);
     if (!sheet) {
       sheet = ss.insertSheet(SHEET_NAME);
-    }
-    // Garante headers na primeira linha
-    if (sheet.getLastRow() === 0) {
+      sheet.appendRow(HEADERS);
+      sheet.getRange(1, 1, 1, HEADERS.length).setFontWeight('bold').setBackground('#004F84').setFontColor('#fff');
+      sheet.setFrozenRows(1);
+    } else if (sheet.getLastRow() === 0) {
       sheet.appendRow(HEADERS);
       sheet.getRange(1, 1, 1, HEADERS.length).setFontWeight('bold').setBackground('#004F84').setFontColor('#fff');
       sheet.setFrozenRows(1);
     }
 
-    // 2. Chama webhook CRM (SEMPRE envia — nao qualificados vao com tag "Menos de R$1500"
-    // pra time diferenciar no funil. Campanhas Meta continuam otimizando pra qualificados
-    // via source_detail; a segregacao acontece no CRM via tag.
+    // 2. Decide qualificacao e tag base
     const qualificado = body.qualificado === true || body.qualificado === 'true' || body.qualificado === 1 || body.qualificado === '1';
-    let crmStatus = 'pending', crmResponse = '';
-    // Monta tags: tag base do perfil + (se nao qualif) "Menos de R$1500"
-    const tagBase = body.tags || (body.perfil === 'Lojista' ? 'LP Lojista' : 'LP Revendedor');
-    const tagsFinal = qualificado ? tagBase : (tagBase + ', Menos de R$1500');
-    try {
-      const crmPayload = {
-        name: body.nome,
-        phone: body.whatsapp,
-        city: body.cidade,
-        cpf_cnpj: body.cpf_cnpj || body.cpf || body.cnpj || '',
-        cpf: body.cpf || '',
-        cnpj: body.cnpj || '',
-        source: body.source || 'lp_revendedor',
-        source_detail: body.source_detail || body.perfil || '',
-        tags: tagsFinal,
-        utm_source: body.utm_source || '',
-        utm_medium: body.utm_medium || '',
-        utm_campaign: body.utm_campaign || '',
-        utm_content: body.utm_content || '',
-        utm_term: body.utm_term || '',
-        fbclid: body.fbclid || '',
-        gclid: body.gclid || '',
-        referrer: body.referrer || '',
-        landing_page: body.landing_page || '',
-        // Campos extras vao pra notas do lead se webhook aceitar
-        perfil: body.perfil,
-        ja_revende: body.ja_revende,
-        como_vende: body.como_vende,
-        tipo_estabelecimento: body.tipo_estabelecimento,
-        ja_vende_linha: body.ja_vende_linha,
-        qualificado: qualificado,
-        investimento_1500: qualificado ? 'sim' : 'nao'
-      };
-      const resp = UrlFetchApp.fetch(CRM_WEBHOOK, {
-        method: 'post',
-        contentType: 'application/json',
-        payload: JSON.stringify(crmPayload),
-        muteHttpExceptions: true
-      });
-      const code = resp.getResponseCode();
-      crmStatus = code >= 200 && code < 300 ? (qualificado ? 'ok' : 'ok_menos1500') : 'erro_' + code;
-      crmResponse = resp.getContentText().substring(0, 500);
-    } catch (crmErr) {
-      crmStatus = 'exception';
-      crmResponse = String(crmErr).substring(0, 500);
+    const situacao = String(body.situacao || '').toLowerCase();
+    const perfilLabel = String(body.perfil || body.situacao_label || '');
+    // Frontend ja manda tags montadas (ex: "LP Lojista Qualificado"). Fallback por garantia:
+    const SITUACAO_TAG = { loja: 'LP Lojista', distribuidora: 'LP Distribuidor', porta_a_porta: 'LP Revendedor PortaPorta', iniciar: 'LP Quer Iniciar' };
+    const tagBase = SITUACAO_TAG[situacao] || 'LP Revendedor';
+    const tagsFinal = body.tags || (qualificado ? (tagBase + ' Qualificado') : (tagBase + ' NAO Qualificado'));
+
+    // 3. Chama webhook CRM — SO se qualificado (nao polui otimizacao Meta)
+    let crmStatus = qualificado ? 'pending' : 'nao_qualificado_nao_enviado';
+    let crmResponse = qualificado ? '' : 'Lead desqualificado — fica so na planilha';
+
+    if (qualificado) {
+      try {
+        const crmPayload = {
+          name: body.nome,
+          phone: body.whatsapp,
+          city: body.cidade,
+          source: body.source || 'lp_revendedor',
+          source_detail: body.source_detail || perfilLabel,
+          tags: tagsFinal,
+          utm_source: body.utm_source || '',
+          utm_medium: body.utm_medium || '',
+          utm_campaign: body.utm_campaign || '',
+          utm_content: body.utm_content || '',
+          utm_term: body.utm_term || '',
+          fbclid: body.fbclid || '',
+          gclid: body.gclid || '',
+          referrer: body.referrer || '',
+          landing_page: body.landing_page || '',
+          // Campos extras (viram notas no CRM se o webhook mapear)
+          perfil: perfilLabel,
+          situacao: situacao,
+          qualificado: true,
+          investimento_1500: 'sim'
+        };
+        const resp = UrlFetchApp.fetch(CRM_WEBHOOK, {
+          method: 'post',
+          contentType: 'application/json',
+          payload: JSON.stringify(crmPayload),
+          muteHttpExceptions: true
+        });
+        const code = resp.getResponseCode();
+        crmStatus = (code >= 200 && code < 300) ? 'ok' : ('erro_' + code);
+        crmResponse = resp.getContentText().substring(0, 500);
+      } catch (crmErr) {
+        crmStatus = 'exception';
+        crmResponse = String(crmErr).substring(0, 500);
+      }
     }
 
-    // 3. Escreve linha final
+    // 4. Escreve linha
     const row = [
       body.timestamp || new Date().toISOString(),
-      body.perfil || '',
+      perfilLabel,
       body.nome || '',
       body.whatsapp || '',
       body.cidade || '',
-      body.cpf || '',
-      body.cnpj || '',
-      body.ja_revende || '',
-      body.como_vende || '',
-      body.tipo_estabelecimento || '',
-      body.ja_vende_linha || '',
+      situacao,
+      qualificado ? 'SIM' : 'NAO',
       body.source || '',
       body.source_detail || '',
-      body.tags || '',
+      tagsFinal,
       body.utm_source || '',
       body.utm_medium || '',
       body.utm_campaign || '',
@@ -153,166 +145,130 @@ function doPost(e) {
   }
 }
 
-// Teste rapido no editor: menu Executar → doPost_test_qualificado / doPost_test_nao_qualificado
+// Testes rapidos — Executar > doPost_test_qualificado / doPost_test_nao_qualificado_iniciar / doPost_test_nao_qualificado_sem1500
 function doPost_test_qualificado() {
   const fake = { postData: { contents: JSON.stringify({
     timestamp: new Date().toISOString(),
-    perfil: 'Revendedor', nome: 'TESTE João Silva QUALIFICADO', whatsapp: '5511999999999',
-    cidade: 'São Paulo / SP', cpf: '12345678909', cpf_cnpj: '12345678909',
-    ja_revende: 'Não, seria minha primeira vez', como_vende: 'Pra vizinhos e conhecidos',
+    perfil: 'Ja tem loja', situacao: 'loja',
+    nome: 'TESTE Joao Loja QUALIFICADO', whatsapp: '5511999999999',
+    cidade: 'Sao Paulo / SP',
     qualificado: true, qualifica_resposta: 'sim', investimento_1500: 'sim',
-    source: 'lp_revendedor', source_detail: 'Formulario Revendedor', tags: 'LP Revendedor',
+    source: 'lp_revendedor', source_detail: 'Qualificado - Ja tem loja',
+    tags: 'LP Lojista Qualificado',
     utm_source: 'facebook', utm_medium: 'cpc', utm_campaign: 'teste',
     device: 'desktop', screen: '1920x1080', viewport: '1440x900',
     user_agent: 'Test', fill_time_ms: 30000
   }) } };
-  const res = doPost(fake);
-  Logger.log(res.getContent());
+  Logger.log(doPost(fake).getContent());
 }
 
-function doPost_test_nao_qualificado() {
+function doPost_test_nao_qualificado_iniciar() {
   const fake = { postData: { contents: JSON.stringify({
     timestamp: new Date().toISOString(),
-    perfil: 'Revendedor', nome: 'TESTE Maria Souza SEM 1500', whatsapp: '5511988888888',
-    cidade: 'Rio de Janeiro / RJ', cpf: '98765432100', cpf_cnpj: '98765432100',
-    ja_revende: 'Não', como_vende: 'Pra vizinhos',
-    qualificado: false, qualifica_resposta: 'nao', investimento_1500: 'nao',
-    source: 'lp_revendedor', source_detail: 'Formulario Revendedor', tags: 'LP Revendedor · Nao qualificado',
+    perfil: 'Quer iniciar (nao revende ainda)', situacao: 'iniciar',
+    nome: 'TESTE Maria Iniciante SEM REVENDA', whatsapp: '5511988888888',
+    cidade: 'Rio de Janeiro / RJ',
+    qualificado: false, qualifica_resposta: 'sim', investimento_1500: 'sim',
+    source: 'lp_revendedor', source_detail: 'Nao qualificado - Ainda nao revende (quer iniciar)',
+    tags: 'LP Quer Iniciar NAO Qualificado',
     utm_source: 'facebook', utm_medium: 'cpc', utm_campaign: 'teste',
     device: 'mobile', screen: '390x844', viewport: '390x664',
     user_agent: 'Test', fill_time_ms: 25000
   }) } };
-  const res = doPost(fake);
-  Logger.log(res.getContent());
+  Logger.log(doPost(fake).getContent());
+}
+
+function doPost_test_nao_qualificado_sem1500() {
+  const fake = { postData: { contents: JSON.stringify({
+    timestamp: new Date().toISOString(),
+    perfil: 'Ja revende porta a porta', situacao: 'porta_a_porta',
+    nome: 'TESTE Carlos SEM 1500', whatsapp: '5511977777777',
+    cidade: 'Belo Horizonte / MG',
+    qualificado: false, qualifica_resposta: 'nao', investimento_1500: 'nao',
+    source: 'lp_revendedor', source_detail: 'Nao qualificado - Nao tem R$ 1.500 pro 1o pedido',
+    tags: 'LP Revendedor PortaPorta NAO Qualificado',
+    utm_source: 'facebook', utm_medium: 'cpc', utm_campaign: 'teste',
+    device: 'mobile', screen: '390x844', viewport: '390x664',
+    user_agent: 'Test', fill_time_ms: 25000
+  }) } };
+  Logger.log(doPost(fake).getContent());
 }
 
 /**
- * BACKFILL — envia retroativamente pro CRM todos os leads NAO QUALIFICADOS
- * que ficaram so na planilha (CRM sync status = "NAO QUALIFICADO..."),
- * com tag "Menos de R$1500". Roda uma vez no editor:
- *   Executar > backfillNaoQualificados
- * Depois de rodar, atualiza a coluna "CRM sync status" pra "ok_menos1500_backfill"
- * pra nao mandar duplicado.
+ * BACKFILL (legado) — reenvia pro CRM os NAO QUALIFICADOS antigos da aba 'LP REVENDEDOR'
+ * (schema anterior com CPF/CNPJ). Rode uma unica vez se precisar recuperar historico.
+ * Depois da reuniao 07/10 decidimos NAO enviar nao-qualificados pro CRM, entao este backfill
+ * nao se aplica a leads novos — fica aqui so pra reprocessar o legado se o time pedir.
  */
-function backfillNaoQualificados() {
+function backfillNaoQualificados_legacy() {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
-  const sheet = ss.getSheetByName(SHEET_NAME);
-  if (!sheet) { Logger.log('Aba nao encontrada: ' + SHEET_NAME); return; }
+  const sheet = ss.getSheetByName(SHEET_NAME_LEGACY);
+  if (!sheet) { Logger.log('Aba legada nao encontrada: ' + SHEET_NAME_LEGACY); return; }
   const lastRow = sheet.getLastRow();
-  if (lastRow < 2) { Logger.log('Sem dados'); return; }
+  if (lastRow < 2) { Logger.log('Sem dados na aba legada'); return; }
 
-  // Mapa de headers → indice de coluna (base 1). Match tolerante: normaliza
-  // removendo acentos, espacos, pontuacao e caixa. Assim "Qualificado (R$1500)",
-  // "Qualificado R$ 1.500", "QualificadoR$1500" etc todos batem.
-  const norm = (s) => String(s || '')
-    .normalize('NFD').replace(/[̀-ͯ]/g, '')
-    .replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
-
+  const norm = (s) => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
   const headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
-  const col = {};       // mapa exato (retrocompat)
-  const colNorm = {};   // mapa normalizado
-  headers.forEach((h, i) => {
-    const trimmed = String(h).trim();
-    col[trimmed] = i + 1;
-    colNorm[norm(trimmed)] = i + 1;
-  });
-  // Helper: acha coluna aceitando lista de nomes alternativos
-  const findCol = (candidates) => {
-    for (const c of candidates) {
-      if (col[c]) return col[c];
-      const n = norm(c);
-      if (colNorm[n]) return colNorm[n];
-    }
-    return null;
-  };
+  const col = {}, colNorm = {};
+  headers.forEach((h, i) => { const t = String(h).trim(); col[t] = i + 1; colNorm[norm(t)] = i + 1; });
+  const findCol = (cands) => { for (const c of cands) { if (col[c]) return col[c]; const n = norm(c); if (colNorm[n]) return colNorm[n]; } return null; };
 
   const colSyncStatus = findCol(['CRM sync status', 'CRM sync', 'sync status']);
   const colSyncResp = findCol(['CRM sync response', 'CRM response', 'sync response']);
-  if (!colSyncStatus) {
-    Logger.log('Coluna "CRM sync status" nao encontrada. Headers: ' + JSON.stringify(headers));
-    return;
-  }
+  if (!colSyncStatus) { Logger.log('Coluna "CRM sync status" nao encontrada. Headers: ' + JSON.stringify(headers)); return; }
 
   const data = sheet.getRange(2, 1, lastRow - 1, sheet.getLastColumn()).getValues();
   let enviados = 0, jaEnviados = 0, erros = 0, ignorados = 0;
 
   for (let i = 0; i < data.length; i++) {
     const row = data[i];
-    const rowIndex = i + 2; // linha real na planilha (com header)
+    const rowIndex = i + 2;
     const syncStatus = String(row[colSyncStatus - 1] || '');
     const syncResp = colSyncResp ? String(row[colSyncResp - 1] || '') : '';
-    // Em algumas linhas antigas, o texto "NAO QUALIFICADO..." caiu na coluna
-    // sync response (desalinhamento antigo). Concatena ambas pra procurar.
     const statusAll = (syncStatus + ' | ' + syncResp).toUpperCase();
 
-    // So processa linhas com "NAO QUALIFICADO..." em qualquer uma das duas colunas
-    const isNaoQualif = statusAll.indexOf('NAO QUALIFICADO') >= 0 ||
-                       statusAll.indexOf('NÃO QUALIFICADO') >= 0;
+    const isNaoQualif = statusAll.indexOf('NAO QUALIFICADO') >= 0 || statusAll.indexOf('NÃO QUALIFICADO') >= 0;
     if (!isNaoQualif) { ignorados++; continue; }
-    // Se ja foi backfilled antes, pula
     if (statusAll.indexOf('BACKFILL') >= 0 || syncStatus.indexOf('ok_menos1500') === 0) { jaEnviados++; continue; }
 
-    // Monta payload a partir da linha
-    const perfil = row[col['Perfil'] - 1] || '';
-    const tagBase = perfil === 'Lojista' ? 'LP Lojista' : 'LP Revendedor';
+    const perfil = row[(col['Perfil'] || 2) - 1] || '';
+    const tagBase = String(perfil).toLowerCase().indexOf('cnpj') >= 0 ? 'LP Lojista' : 'LP Revendedor';
     const payload = {
-      name: row[col['Nome'] - 1] || '',
-      phone: row[col['WhatsApp'] - 1] || '',
-      city: row[col['Cidade/UF'] - 1] || '',
-      cpf_cnpj: row[col['CPF'] - 1] || row[col['CNPJ'] - 1] || '',
-      cpf: row[col['CPF'] - 1] || '',
-      cnpj: row[col['CNPJ'] - 1] || '',
-      source: row[col['Source'] - 1] || 'lp_revendedor',
-      source_detail: row[col['Source detail'] - 1] || perfil,
+      name: row[(col['Nome'] || 3) - 1] || '',
+      phone: row[(col['WhatsApp'] || 4) - 1] || '',
+      city: row[(col['Cidade/UF'] || 5) - 1] || '',
+      source: row[(col['Source'] || 12) - 1] || 'lp_revendedor',
+      source_detail: row[(col['Source detail'] || 13) - 1] || perfil,
       tags: tagBase + ', Menos de R$1500, Backfill',
-      utm_source: row[col['UTM source'] - 1] || '',
-      utm_medium: row[col['UTM medium'] - 1] || '',
-      utm_campaign: row[col['UTM campaign'] - 1] || '',
-      utm_content: row[col['UTM content'] - 1] || '',
-      utm_term: row[col['UTM term'] - 1] || '',
-      fbclid: row[col['fbclid'] - 1] || '',
-      gclid: row[col['gclid'] - 1] || '',
-      referrer: row[col['Referrer'] - 1] || '',
-      landing_page: row[col['Landing page'] - 1] || '',
-      perfil: perfil,
-      ja_revende: row[col['Já revende hoje'] - 1] || '',
-      como_vende: row[col['Como pretende vender'] - 1] || '',
-      tipo_estabelecimento: row[col['Tipo estabelecimento'] - 1] || '',
-      ja_vende_linha: row[col['Já vende linha de limpeza'] - 1] || '',
-      qualificado: false,
-      investimento_1500: 'nao'
+      utm_source: row[(col['UTM source'] || 15) - 1] || '',
+      utm_medium: row[(col['UTM medium'] || 16) - 1] || '',
+      utm_campaign: row[(col['UTM campaign'] || 17) - 1] || '',
+      perfil, qualificado: false, investimento_1500: 'nao'
     };
 
     try {
       const resp = UrlFetchApp.fetch(CRM_WEBHOOK, {
-        method: 'post',
-        contentType: 'application/json',
-        payload: JSON.stringify(payload),
-        muteHttpExceptions: true
+        method: 'post', contentType: 'application/json',
+        payload: JSON.stringify(payload), muteHttpExceptions: true
       });
       const code = resp.getResponseCode();
       if (code >= 200 && code < 300) {
         sheet.getRange(rowIndex, colSyncStatus).setValue('ok_menos1500_backfill');
-        sheet.getRange(rowIndex, colSyncResp).setValue(resp.getContentText().substring(0, 500));
+        if (colSyncResp) sheet.getRange(rowIndex, colSyncResp).setValue(resp.getContentText().substring(0, 500));
         enviados++;
       } else {
         sheet.getRange(rowIndex, colSyncStatus).setValue('erro_backfill_' + code);
-        sheet.getRange(rowIndex, colSyncResp).setValue(resp.getContentText().substring(0, 500));
+        if (colSyncResp) sheet.getRange(rowIndex, colSyncResp).setValue(resp.getContentText().substring(0, 500));
         erros++;
       }
     } catch (err) {
       sheet.getRange(rowIndex, colSyncStatus).setValue('excecao_backfill');
-      sheet.getRange(rowIndex, colSyncResp).setValue(String(err).substring(0, 500));
+      if (colSyncResp) sheet.getRange(rowIndex, colSyncResp).setValue(String(err).substring(0, 500));
       erros++;
     }
-    // Pausa breve pra nao bater rate limit do CRM
     Utilities.sleep(300);
   }
 
-  Logger.log('Backfill concluido — enviados=' + enviados + ' jaEnviados=' + jaEnviados + ' erros=' + erros + ' ignorados=' + ignorados);
-  SpreadsheetApp.getActiveSpreadsheet().toast(
-    'Backfill: ' + enviados + ' enviados, ' + erros + ' erros, ' + jaEnviados + ' ja tinham sido',
-    'Ustulimp CRM',
-    10
-  );
+  Logger.log('Backfill legado concluido — enviados=' + enviados + ' jaEnviados=' + jaEnviados + ' erros=' + erros + ' ignorados=' + ignorados);
+  SpreadsheetApp.getActiveSpreadsheet().toast('Backfill legado: ' + enviados + ' enviados, ' + erros + ' erros, ' + jaEnviados + ' ja tinham sido', 'Ustulimp CRM', 10);
 }
